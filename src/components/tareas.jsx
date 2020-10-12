@@ -3,6 +3,7 @@ import {Form, Button, Modal, Table, Navbar, Nav, FormControl} from 'react-bootst
 import {Container,Row,Col} from 'reactstrap'
 import { AlarmOn, Done, Delete, Settings } from '@material-ui/icons';
 import moment from 'moment'
+import BootstrapTable from 'react-bootstrap-table-next';
 
 function Tareas (props) {
     const [errorTime, setErrorTime] = useState(false)
@@ -10,6 +11,101 @@ function Tareas (props) {
     const [task, setTask] = useState({})
 
     const withPointer = {cursor: 'pointer'};
+
+    const columns_initial = [
+        {
+            dataField: 'index',
+            text: '#',
+            sort: true,
+            width:"200"
+        },
+        {
+            dataField: 'nombreTarea',
+            text: 'Nombre tarea',
+            sort: true
+        },
+        {
+            dataField: 'totHour',
+            text: 'Tiempo',
+            sort: true,
+        },
+        {
+            dataField: 'opciones',
+            text: 'Opciones',
+            formatter: ((cell, row)=>{
+                return <>
+                    <AlarmOn
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index-1}
+                        onClick={(e)=>console.log("prueba-AlarmOn",e.currentTarget.id)}
+                    />
+                    <Done
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index-1}
+                        onClick={(e)=>console.log("prueba-Done",e.currentTarget.id)}
+                    />
+                    <Delete
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index-1}
+                        onClick={(e)=>console.log("prueba-Delete",e.currentTarget.id)}
+                    />
+                    <Settings
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index-1}
+                        onClick={(e)=>console.log("prueba-Settings",e.currentTarget.id)}
+                    />
+                </>
+            })
+        }
+    ]
+
+    const columns_terminated = [
+        {
+            dataField: 'index',
+            text: '#',
+            sort: true,
+            width:"200"
+        },
+        {
+            dataField: 'nombreTarea',
+            text: 'Nombre tarea',
+            sort: true
+        },
+        {
+            dataField: 'totHour',
+            text: 'Tiempo',
+            sort: true,
+        },
+        {
+            dataField: 'opciones',
+            text: 'Opciones',
+            formatter: ((cell, row)=>{
+                return <>
+                    <Delete
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index-1}
+                        onClick={(e)=>console.log("prueba-reloj",e.currentTarget.id)}
+                    />
+                    <Settings
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index-1}
+                        onClick={(e)=>console.log("prueba-settings",e.currentTarget.id)}
+                    />
+                </>
+            })
+        }
+    ]
+
+    const defaultSorted = [{
+        dataField: 'index',
+        order: 'asc'
+    }];
 
     const createData = () => {
         //aqui es donde se crean datos al azar
@@ -25,6 +121,7 @@ function Tareas (props) {
             sec=sec<10?`0${sec}`:sec
             let totHour = hour===2?"02:00:00":`${hour}:${min}:${sec}`
             let objectRandom = {
+                index:countData+1,
                 nombreTarea: Math.random().toString(36).substring(10),
                 fecha:moment(inicioFecha, 'MM/DD/YYYY').add(Math.trunc(Math.random()*10),'day').format('MM/DD/YYYY'),
                 totHour
@@ -32,7 +129,6 @@ function Tareas (props) {
             arrayData.push(objectRandom)
         }
         props.createData(arrayData)
-        console.log(arrayData)
     }
 
     const handleChange = ( event ) => {
@@ -103,108 +199,42 @@ function Tareas (props) {
                         <Navbar.Brand>Tareas Pendientes</Navbar.Brand>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav">
-                            <Nav className="mr-auto">
-                                <Nav.Link >Ordenar por tiempo</Nav.Link>
-                            </Nav>
                             <Form inline>
                                 <FormControl type="text" placeholder="Busqueda" className="mr-sm-2" />
                                 <Button variant="outline-info">Busqueda</Button>
                             </Form>
                         </Navbar.Collapse>
                     </Navbar>
-                    <Table striped bordered hover>
-                        <thead>
-                            <tr>
-                            <th>#</th>
-                            <th>Nombre tarea</th>
-                            <th>Tiempo</th>
-                            <th>Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Nombre</td>
-                                <td>01:00:00</td>
-                                <td>
-                                    <AlarmOn
-                                        fontSize="small"
-                                        style={withPointer}
-                                        onClick={()=>console.log("prueba-reloj")}
-                                    />
-                                    <Done
-                                        fontSize="small"
-                                        style={withPointer}
-                                        onClick={()=>console.log("prueba-paloma")}
-                                    />
-                                    <Delete
-                                        fontSize="small"
-                                        style={withPointer}
-                                        onClick={()=>console.log("prueba-borrar")}
-                                    />
-                                    <Settings
-                                        fontSize="small"
-                                        style={withPointer}
-                                        onClick={()=>console.log("prueba-settings")}
-                                    />
-                                </td>
-                            </tr>
-                        </tbody>
-                    </Table>
+                    <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                        <BootstrapTable
+                            bootstrap4
+                            keyField="id"
+                            data={ [] }
+                            columns={ columns_initial }
+                            defaultSorted={defaultSorted}
+                        />
+                    </div>
                 </Col>
                 <Col md="6">
                     <Navbar bg="light" variant="light" expand="lg">
                         <Navbar.Brand>Tareas Finalizadas</Navbar.Brand>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav">
-                            <Nav className="mr-auto">
-                                <Nav.Link >Ordenar por tiempo</Nav.Link>
-                            </Nav>
                             <Form inline>
                                 <FormControl type="text" placeholder="Busqueda" className="mr-sm-2" />
                                 <Button variant="outline-info">Busqueda</Button>
                             </Form>
                         </Navbar.Collapse>
                     </Navbar>
-                    <Table striped bordered hover>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nombre tarea</th>
-                                <th>Tiempo</th>
-                                <th>Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                props.dataTerminated.length>0
-                                ? props.dataTerminated.map((val,index)=>{
-                                    return (
-                                        <tr id={index}>
-                                            <td>{index+1}</td>
-                                            <td>{val.nombreTarea}</td>
-                                            <td>{val.totHour}</td>
-                                            <td>
-                                                <Delete
-                                                    fontSize="small"
-                                                    style={withPointer}
-                                                    id={index}
-                                                    onClick={(e)=>console.log("prueba-reloj",e.currentTarget.id)}
-                                                />
-                                                <Settings
-                                                    fontSize="small"
-                                                    style={withPointer}
-                                                    id={index}
-                                                    onClick={(e)=>console.log("prueba-settings",e.currentTarget.id)}
-                                                />
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                                : null
-                            }                            
-                        </tbody>
-                    </Table>
+                    <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                        <BootstrapTable
+                            bootstrap4
+                            keyField="id"
+                            data={ props.dataTerminated }
+                            columns={ columns_terminated }
+                            defaultSorted={defaultSorted}
+                        />
+                    </div>
                 </Col>
             </Row>
         </Container>
