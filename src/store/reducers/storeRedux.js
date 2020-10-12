@@ -1,30 +1,21 @@
 import * as actionTypes from '../actions/actionTypes.js'
 
 const initialState = {
-    findMovWord:'',
-    favoritePokemon : [],
-    favoritePokemon: localStorage.getItem("pokedex") !== null ? JSON.parse(localStorage.getItem("pokedex")) : [],
-    pokemon: {}
+    dataModal: {},
+    dataTerminated: []
 }
 
 const reducer = (state=initialState, action) => {
     switch (action.type) {
-        case actionTypes.FIND_DATA:
+        case actionTypes.CREATE_DATA:
             return {
                 ...state,
-                pokemon:action.data.data
+                dataTerminated:action.data
             }
         case actionTypes.CLEAR_DATA:
             return {
                 ...state,
-                pokemon:{}
-            }
-        case actionTypes.ADD_DATA:
-            localStorage.clear();
-            localStorage.setItem("pokedex", JSON.stringify(action.value))
-            return {
-                ...state,
-                favoritePokemon:action.value
+                dataModal:{}
             }
         default:
             return state

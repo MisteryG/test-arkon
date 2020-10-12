@@ -1,15 +1,18 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
 import { connect } from 'react-redux'
 import Navegacion from "../components/navegacion"
 import Tareas from "../components/tareas"
+import * as actionTypes from '../store/actions/index.js'
 
 class Principal extends React.Component {
     render (){
         return(
             <React.Fragment>
                 <Navegacion/>
-                <Tareas/>
+                <Tareas
+                    createData={this.props.createData}
+                    dataTerminated={this.props.dataTerminated}
+                />
             </React.Fragment>
         )
     }
@@ -17,13 +20,13 @@ class Principal extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        
+        dataTerminated: state.dataTerminated
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-      
+        createData:(data)=>{dispatch(actionTypes.createData(data))}
     }
 }
 

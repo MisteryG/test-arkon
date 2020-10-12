@@ -1,5 +1,4 @@
 import * as actionTypes from './actionTypes.js'
-import axios from 'axios'
 
 export const loadData = (data) => {
     return {
@@ -28,14 +27,9 @@ export const clearData = () => {
     }
 }
 
-export const findData = (findPokemon) => {
-    return (dispatch) => {
-        axios.get('https://pokeapi.co/api/v2/pokemon/'+findPokemon)
-            .then (response=>{
-                dispatch(loadPokemon(response))
-            })
-            .catch (error=>{
-                dispatch(errorConsult(error))
-            })
+export const createData = (data) => {
+    return {
+        type:actionTypes.CREATE_DATA,
+        data
     }
 }

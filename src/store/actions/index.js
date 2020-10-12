@@ -3,5 +3,5 @@ export {
     errorConsult,
     addData,
     clearData,
-    findData
+    createData
 } from './actionsStore.js'
