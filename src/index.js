@@ -3,11 +3,24 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk'
+import { Provider } from 'react-redux';
+import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom'
+import Principal from './containers/principal';
+import reducer from './store/reducers/storeRedux.js'
+import 'bootstrap/dist/css/bootstrap.min.css';
+const store = createStore (reducer, applyMiddleware(thunk))
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Provider store={store}>
+    <BrowserRouter>
+        <Switch>
+            <Route path="/menu/principal" exact component={Principal}/>
+            <Redirect from="/" to="/menu/principal"/>
+        </Switch>
+    </BrowserRouter>
+  </Provider>,
   document.getElementById('root')
 );
 
