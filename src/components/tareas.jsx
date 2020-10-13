@@ -132,14 +132,18 @@ function Tareas (props) {
         orderArray = orderArray.concat(filter)
         props.addData(orderArray)
         let timeSeconds = (parseInt(arrayDeCadenas[0])*3600)+(parseInt(arrayDeCadenas[1])*60)+parseInt(arrayDeCadenas[2])
+        let timeExpend = 0
         let exeCount = setInterval(()=>{
             if (timeSeconds==0) {
+                handleDone(index)
                 clearInterval(exeCount)
             } else {
                 timeSeconds--
+                timeExpend++
                 let newArray = orderArray.map (val=>{
                     if (val.index==index) {
                         val.totDiference=secondsToString(timeSeconds)
+                        val.totTimeExpend=secondsToString(timeExpend)
                     }
                     return val
                 })
