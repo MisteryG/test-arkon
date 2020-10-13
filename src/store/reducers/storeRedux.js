@@ -2,7 +2,8 @@ import * as actionTypes from '../actions/actionTypes.js'
 
 const initialState = {
     dataModal: {},
-    dataTerminated: []
+    dataTerminated: [],
+    dataInitial: []
 }
 
 const reducer = (state=initialState, action) => {
@@ -11,6 +12,11 @@ const reducer = (state=initialState, action) => {
             return {
                 ...state,
                 dataTerminated:action.data
+            }
+        case actionTypes.ADD_DATA:
+            return {
+                ...state,
+                dataInitial:action.data
             }
         case actionTypes.CLEAR_DATA:
             return {

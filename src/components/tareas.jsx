@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Form, Button, Modal, Table, Navbar, Nav, FormControl} from 'react-bootstrap'
+import {Form, Button, Modal, Navbar, FormControl} from 'react-bootstrap'
 import {Container,Row,Col} from 'reactstrap'
 import { AlarmOn, Done, Delete, Settings } from '@material-ui/icons';
 import moment from 'moment'
@@ -16,8 +16,7 @@ function Tareas (props) {
         {
             dataField: 'index',
             text: '#',
-            sort: true,
-            width:"200"
+            sort: true
         },
         {
             dataField: 'nombreTarea',
@@ -27,7 +26,7 @@ function Tareas (props) {
         {
             dataField: 'totHour',
             text: 'Tiempo',
-            sort: true,
+            sort: true
         },
         {
             dataField: 'opciones',
@@ -37,25 +36,25 @@ function Tareas (props) {
                     <AlarmOn
                         fontSize="small"
                         style={withPointer}
-                        id={row.index-1}
+                        id={row.index}
                         onClick={(e)=>console.log("prueba-AlarmOn",e.currentTarget.id)}
                     />
                     <Done
                         fontSize="small"
                         style={withPointer}
-                        id={row.index-1}
+                        id={row.index}
                         onClick={(e)=>console.log("prueba-Done",e.currentTarget.id)}
                     />
                     <Delete
                         fontSize="small"
                         style={withPointer}
-                        id={row.index-1}
-                        onClick={(e)=>console.log("prueba-Delete",e.currentTarget.id)}
+                        id={row.index}
+                        onClick={(e)=>deleteData("initial",e.currentTarget.id)}
                     />
                     <Settings
                         fontSize="small"
                         style={withPointer}
-                        id={row.index-1}
+                        id={row.index}
                         onClick={(e)=>console.log("prueba-Settings",e.currentTarget.id)}
                     />
                 </>
@@ -88,13 +87,13 @@ function Tareas (props) {
                     <Delete
                         fontSize="small"
                         style={withPointer}
-                        id={row.index-1}
-                        onClick={(e)=>console.log("prueba-reloj",e.currentTarget.id)}
+                        id={row.index}
+                        onClick={(e)=>deleteData("terminated",e.currentTarget.id)}
                     />
                     <Settings
                         fontSize="small"
                         style={withPointer}
-                        id={row.index-1}
+                        id={row.index}
                         onClick={(e)=>console.log("prueba-settings",e.currentTarget.id)}
                     />
                 </>
@@ -106,6 +105,17 @@ function Tareas (props) {
         dataField: 'index',
         order: 'asc'
     }];
+
+    const deleteData = (name,position) => {
+        let data = []
+        if (name==="initial") {
+            data = props.dataInitial.filter(val => val.index!=position)
+            props.addData(data)
+        } else if (name==="terminated") {
+            data = props.dataTerminated.filter(val => val.index!=position)
+            props.createData(data)
+        }
+    }
 
     const createData = () => {
         //aqui es donde se crean datos al azar
@@ -131,6 +141,26 @@ function Tareas (props) {
         props.createData(arrayData)
     }
 
+    const constCreateTask = () => {
+        //donde se crean las tareas nuevas
+        let index=0
+        props.dataInitial.forEach(value=>{
+            if (index<value.index) {
+                index=value.index
+            }
+        })
+        let fecha = moment().format('MM/DD/YYYY')
+        let objSend = {
+            index:index+1,
+            nombreTarea: task.description,
+            fecha,
+            totHour: task.durationTask
+        }
+        let array = props.dataInitial
+        array.push(objSend)
+        props.addData(array)
+    }
+
     const handleChange = ( event ) => {
         let property = event.target.id
         let value = event.target.value
@@ -151,12 +181,17 @@ function Tareas (props) {
         setTask( { ...task, [property]:value})
     }
 
+    const handleCloseModal = () => {
+        setShowModal(!showModal)
+        setTask({})
+    }
+
     let {description,durationTask} = task
     let disButton=Object.keys(task).length!==0&&task.hasOwnProperty('description')&&task.hasOwnProperty('durationTask')&&!errorTime?false:true
     
     return (
         <Container fluid>
-            <Modal show={showModal} onHide={()=>setShowModal(!showModal)}>
+            <Modal show={showModal} onHide={()=>handleCloseModal()}>
                 <Modal.Header closeButton>
                     <Modal.Title>Creación de Tarea</Modal.Title>
                 </Modal.Header>
@@ -181,16 +216,19 @@ function Tareas (props) {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={()=>setShowModal(!showModal)}>Cerrar</Button>
-                    <Button variant="primary" disabled={disButton} onClick={()=>{console.log("prueba",task)}}>Crear Tarea</Button>
+                    <Button variant="primary" disabled={disButton} onClick={()=>{
+                        constCreateTask()
+                        handleCloseModal()
+                    }}>Crear Tarea</Button>
                 </Modal.Footer>
             </Modal>
-            <Row>
+            <Row style={{padding:"10px"}}>
                 <Col md="7"/>
                 <Col md="3">
                     <Button variant="secondary" size="lg" onClick={()=>{createData()}}>Random Tareas Finalizadas</Button>
                 </Col>
                 <Col md="2">
-                    <Button variant="secondary" size="lg" onClick={()=>{setShowModal(!showModal)}}>Crear Tarea</Button>
+                    <Button variant="secondary" size="lg" onClick={()=>{handleCloseModal()}}>Crear Tarea</Button>
                 </Col>
             </Row>
             <Row>
@@ -209,7 +247,7 @@ function Tareas (props) {
                         <BootstrapTable
                             bootstrap4
                             keyField="id"
-                            data={ [] }
+                            data={ props.dataInitial }
                             columns={ columns_initial }
                             defaultSorted={defaultSorted}
                         />

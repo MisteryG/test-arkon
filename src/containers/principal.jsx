@@ -11,7 +11,9 @@ class Principal extends React.Component {
                 <Navegacion/>
                 <Tareas
                     createData={this.props.createData}
+                    addData={this.props.addData}
                     dataTerminated={this.props.dataTerminated}
+                    dataInitial={this.props.dataInitial}
                 />
             </React.Fragment>
         )
@@ -20,13 +22,15 @@ class Principal extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        dataTerminated: state.dataTerminated
+        dataTerminated: state.dataTerminated,
+        dataInitial: state.dataInitial
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        createData:(data)=>{dispatch(actionTypes.createData(data))}
+        createData:(data)=>{dispatch(actionTypes.createData(data))},
+        addData:(data)=>{dispatch(actionTypes.addData(data))}
     }
 }
 

@@ -14,10 +14,10 @@ export const errorConsult = (error) => {
     }
 }
 
-export const addData = (value) => {
+export const addData = (data) => {
     return {
         type:actionTypes.ADD_DATA,
-        value
+        data
     }
 }
 
