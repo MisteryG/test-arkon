@@ -14,6 +14,7 @@ const reducer = (state=initialState, action) => {
                 dataTerminated:action.data
             }
         case actionTypes.ADD_DATA:
+            console.log("loquellega",action.data)
             return {
                 ...state,
                 dataInitial:action.data

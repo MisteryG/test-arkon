@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
-import {Form, Button, Modal, Navbar, FormControl} from 'react-bootstrap'
+import {Form, Button, Modal, Navbar, FormControl, Card} from 'react-bootstrap'
 import {Container,Row,Col} from 'reactstrap'
-import { AlarmOn, Done, Delete, Settings } from '@material-ui/icons';
+import { AlarmOn, Done, Delete, Settings, AlarmOff } from '@material-ui/icons';
 import moment from 'moment'
 import BootstrapTable from 'react-bootstrap-table-next';
 
@@ -38,31 +38,42 @@ function Tareas (props) {
             text: 'Opciones',
             formatter: ((cell, row)=>{
                 return <>
-                    <AlarmOn
-                        fontSize="small"
-                        style={withPointer}
-                        id={row.index}
-                        onClick={(e)=>console.log("prueba-AlarmOn",e.currentTarget.id)}
-                    />
+                    {
+                        !row.initTime
+                        ?   <>   
+                            <AlarmOn
+                                fontSize="small"
+                                style={withPointer}
+                                id={row.index}
+                                onClick={(e)=>initClock(e.currentTarget.id)}
+                            />
+                            <Delete
+                                fontSize="small"
+                                style={withPointer}
+                                id={row.index}
+                                onClick={(e)=>deleteData("initial",e.currentTarget.id)}
+                            />
+                            <Settings
+                                fontSize="small"
+                                style={withPointer}
+                                id={row.index}
+                                onClick={(e)=>console.log("prueba-Settings",e.currentTarget.id)}
+                            />
+                            </>
+                        :   <AlarmOff
+                                fontSize="small"
+                                style={withPointer}
+                                id={row.index}
+                                onClick={(e)=>console.log("prueba-alarmoff",e.currentTarget.id)}
+                            />
+                    }
                     <Done
                         fontSize="small"
                         style={withPointer}
                         id={row.index}
                         onClick={(e)=>handleDone(e.currentTarget.id)}
                     />
-                    <Delete
-                        fontSize="small"
-                        style={withPointer}
-                        id={row.index}
-                        onClick={(e)=>deleteData("initial",e.currentTarget.id)}
-                    />
-                    <Settings
-                        fontSize="small"
-                        style={withPointer}
-                        id={row.index}
-                        onClick={(e)=>console.log("prueba-Settings",e.currentTarget.id)}
-                    />
-                </>
+                </>  
             })
         }
     ]
@@ -111,10 +122,31 @@ function Tareas (props) {
         }
     ]
 
-    const defaultSorted = [{
-        dataField: 'index',
-        order: 'asc'
-    }];
+    const initClock = (index) => {
+        let found = props.dataInitial.find(value=>value.index==index)
+        found.initTime = true
+        var arrayDeCadenas = found.totDiference.split(':');
+        let filter = props.dataInitial.filter(value=>value.index!=index)
+        let orderArray = []
+        orderArray.push(found)
+        orderArray = orderArray.concat(filter)
+        props.addData(orderArray)
+        let timeSeconds = (parseInt(arrayDeCadenas[0])*3600)+(parseInt(arrayDeCadenas[1])*60)+parseInt(arrayDeCadenas[2])
+        let exeCount = setInterval(()=>{
+            if (timeSeconds==0) {
+                clearInterval(exeCount)
+            } else {
+                timeSeconds--
+                let newArray = orderArray.map (val=>{
+                    if (val.index==index) {
+                        val.totDiference=secondsToString(timeSeconds)
+                    }
+                    return val
+                })
+                props.addData(newArray)
+            }
+        }, 1000)
+    }   
 
     const deleteData = (name,position) => {
         let data = []
@@ -147,7 +179,8 @@ function Tareas (props) {
                 nombreTarea: Math.random().toString(36).substring(10),
                 fecha:moment(inicioFecha, 'MM/DD/YYYY').add(Math.trunc(Math.random()*10),'day').format('MM/DD/YYYY'),
                 totHour,
-                totTimeExpend: secondsToString(Math.trunc(Math.floor(timeSeconds*randomPercent)/100))
+                totTimeExpend: secondsToString(Math.trunc(Math.floor(timeSeconds*randomPercent)/100)),
+                edition: false
             }
             arrayData.push(objectRandom)
         }
@@ -179,7 +212,8 @@ function Tareas (props) {
             nombreTarea: task.description,
             fecha,
             totHour: task.durationTask,
-            totDiference: task.durationTask
+            totDiference: task.durationTask,
+            initTime: false
         }
         let array = props.dataInitial
         array.push(objSend)
@@ -272,6 +306,17 @@ function Tareas (props) {
                     <Button variant="secondary" size="lg" onClick={()=>{handleCloseModal()}}>Crear Tarea</Button>
                 </Col>
             </Row>
+            {/* <Row style={{padding:"10px"}}>
+                <Col/>
+                <Col md="6">
+                <Card>
+                    <Card.Body>
+                        <Card.Title>Tarea ejecutándose</Card.Title>
+                    </Card.Body>
+                </Card>
+                </Col>
+                <Col/>
+            </Row> */}
             <Row>
                 <Col md="6">
                     <Navbar bg="light" variant="light" expand="lg">
@@ -287,10 +332,10 @@ function Tareas (props) {
                     <div className="table-wrapper-scroll-y my-custom-scrollbar">
                         <BootstrapTable
                             bootstrap4
-                            keyField="id"
+                            keyField="index"
                             data={ props.dataInitial }
                             columns={ columns_initial }
-                            defaultSorted={defaultSorted}
+                            striped bordered hover
                         />
                     </div>
                 </Col>
@@ -308,10 +353,11 @@ function Tareas (props) {
                     <div className="table-wrapper-scroll-y my-custom-scrollbar">
                         <BootstrapTable
                             bootstrap4
-                            keyField="id"
+                            keyField="index"
                             data={ props.dataTerminated }
                             columns={ columns_terminated }
-                            defaultSorted={defaultSorted}
+                            defaultSorted={[{dataField: 'index',order: 'asc'}]}
+                            striped bordered hover
                         />
                     </div>
                 </Col>
