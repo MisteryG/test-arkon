@@ -25,7 +25,12 @@ function Tareas (props) {
         },
         {
             dataField: 'totHour',
-            text: 'Tiempo',
+            text: 'Tiempo Total',
+            sort: true
+        },
+        {
+            dataField: 'totDiference',
+            text: 'Tiempo Restante',
             sort: true
         },
         {
@@ -76,7 +81,12 @@ function Tareas (props) {
         },
         {
             dataField: 'totHour',
-            text: 'Tiempo',
+            text: 'Tiempo Total',
+            sort: true,
+        },
+        {
+            dataField: 'totTimeExpend',
+            text: 'Tiempo Consumido',
             sort: true,
         },
         {
@@ -130,19 +140,33 @@ function Tareas (props) {
             min=min<10?`0${min}`:min
             sec=sec<10?`0${sec}`:sec
             let totHour = hour===2?"02:00:00":`${hour}:${min}:${sec}`
+            let randomPercent = Math.trunc(80 + Math.random() * (100 - 80))
+            let timeSeconds = (parseInt(hour)*3600)+(parseInt(min)*60)+parseInt(sec)
             let objectRandom = {
                 index:countData+1,
                 nombreTarea: Math.random().toString(36).substring(10),
                 fecha:moment(inicioFecha, 'MM/DD/YYYY').add(Math.trunc(Math.random()*10),'day').format('MM/DD/YYYY'),
-                totHour
+                totHour,
+                totTimeExpend: secondsToString(Math.trunc(Math.floor(timeSeconds*randomPercent)/100))
             }
             arrayData.push(objectRandom)
         }
         props.createData(arrayData)
     }
 
+    const secondsToString = (seconds) => {
+        //funcion para convertir de segundos a horas
+        var hour = Math.floor(seconds / 3600);
+        hour = (hour < 10)? '0' + hour : hour;
+        var minute = Math.floor((seconds / 60) % 60);
+        minute = (minute < 10)? '0' + minute : minute;
+        var second = seconds % 60;
+        second = (second < 10)? '0' + second : second;
+        return hour + ':' + minute + ':' + second;
+    }
+
     const constCreateTask = () => {
-        //donde se crean las tareas nuevas
+        //funcion donde se crean las tareas nuevas
         let index=0
         props.dataInitial.forEach(value=>{
             if (index<value.index) {
@@ -154,7 +178,8 @@ function Tareas (props) {
             index:index+1,
             nombreTarea: task.description,
             fecha,
-            totHour: task.durationTask
+            totHour: task.durationTask,
+            totDiference: task.durationTask
         }
         let array = props.dataInitial
         array.push(objSend)
