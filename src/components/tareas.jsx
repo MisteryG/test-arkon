@@ -43,7 +43,7 @@ function Tareas (props) {
                         fontSize="small"
                         style={withPointer}
                         id={row.index}
-                        onClick={(e)=>console.log("prueba-Done",e.currentTarget.id)}
+                        onClick={(e)=>handleDone(e.currentTarget.id)}
                     />
                     <Delete
                         fontSize="small"
@@ -179,6 +179,22 @@ function Tareas (props) {
             }
         }
         setTask( { ...task, [property]:value})
+    }
+
+    const handleDone = (position) => {
+        let found = props.dataInitial.find(val=>val.index==position)
+        let data = props.dataInitial.filter(val => val.index!=position)
+        let index=0
+        props.dataTerminated.forEach(value=>{
+            if (index<value.index) {
+                index=value.index
+            }
+        })
+        found = {...found,index:index+1}
+        let array = props.dataTerminated
+        array.push(found)
+        props.addData(data)
+        props.createData(array)
     }
 
     const handleCloseModal = () => {
