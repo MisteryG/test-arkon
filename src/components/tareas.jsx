@@ -19,6 +19,20 @@ function Tareas (props) {
 
     function resetTime() {
         setIsActive(false);
+        let obj = {...initInterval}
+        obj.timeSeconds=initInterval.totHour
+        obj.timeExpend = 0
+        obj.initTime = false
+        setInitInterval(obj)
+        let newArray = initInterval.orderArray.map (val=>{
+            if (val.index==initInterval.index) {
+                val.totDiference=secondsToString(initInterval.timeSeconds)
+                val.totTimeExpend=secondsToString(initInterval.timeExpend)
+            }
+            return val
+        })
+        setInitInterval({})
+        props.addData(newArray)
     }
 
     useEffect(() => {
@@ -145,7 +159,7 @@ function Tareas (props) {
                                 fontSize="small"
                                 style={withPointer}
                                 id={row.index}
-                                onClick={(e)=>initClock(e.currentTarget.id)}
+                                onClick={(e)=>resetTime()}
                             />
                             </>
                     }
@@ -454,14 +468,7 @@ function Tareas (props) {
                 </Col>
                 <Col md="6">
                     <Navbar bg="light" variant="light" expand="lg">
-                        <Navbar.Brand>Tareas Finalizadas</Navbar.Brand>
-                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                        <Navbar.Collapse id="basic-navbar-nav">
-                            <Form inline>
-                                <FormControl type="text" placeholder="Busqueda" className="mr-sm-2" />
-                                <Button variant="outline-info">Busqueda</Button>
-                            </Form>
-                        </Navbar.Collapse>
+                        <Navbar.Brand>Historial de tareas completadas</Navbar.Brand>
                     </Navbar>
                     <GenericTable
                         data={props.dataTerminated}

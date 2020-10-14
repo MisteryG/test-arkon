@@ -7,6 +7,7 @@ import thunk from 'redux-thunk'
 import { Provider } from 'react-redux';
 import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom'
 import Principal from './containers/principal';
+import Graficas from './containers/grafica'
 import reducer from './store/reducers/storeRedux.js'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
@@ -17,6 +18,7 @@ ReactDOM.render(
     <BrowserRouter>
         <Switch>
             <Route path="/menu/principal" exact component={Principal}/>
+            <Route path="/menu/graficas" exact component={Graficas}/>
             <Redirect from="/" to="/menu/principal"/>
         </Switch>
     </BrowserRouter>

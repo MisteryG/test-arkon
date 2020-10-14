@@ -9,7 +9,7 @@ function Navegacion () {
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
                     <Nav.Link href="/menu/principal">Creación de Tareas</Nav.Link>
-                    <Nav.Link href="">Graficas</Nav.Link>
+                    <Nav.Link href="/menu/graficas">Graficas</Nav.Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

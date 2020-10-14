@@ -5,6 +5,7 @@ import Tareas from "../components/tareas"
 import * as actionTypes from '../store/actions/index.js'
 
 class Principal extends React.Component {
+
     render (){
         return(
             <React.Fragment>
