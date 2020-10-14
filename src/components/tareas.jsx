@@ -9,6 +9,7 @@ import GenericTable from '../generic/table'
 function Tareas (props) {
     const [errorTime, setErrorTime] = useState(false)
     const [showModal, setShowModal] = useState(false)
+    const [selectorModal, setSelectorModal] = useState(false)
     const [task, setTask] = useState({})
     const [initInterval, setInitInterval] = useState({});
     const [isActive, setIsActive] = useState(false);
@@ -382,16 +383,31 @@ function Tareas (props) {
                             <Form.Label>Descripcion tarea</Form.Label>
                             <Form.Control type="description" placeholder="Ingresa tu descripción" value={description} id="description" onChange={handleChange}/>
                         </Form.Group>
+                        {
+                            selectorModal
+                            ?   <Form.Group>
+                                    <Form.Label>Duracion tarea</Form.Label>
+                                    <Form.Control type="durationTask" placeholder="00:00:00" value={durationTask} id="durationTask" onChange={handleChange}/>
+                                    {
+                                        errorTime
+                                        ?   <Form.Text className="text-muted">
+                                                Error en la hora, recuerda que no puede ser arriba de dos horas.
+                                            </Form.Text>
+                                        :   null
+                                    }
+                                </Form.Group>
+                            :   <Form.Group>
+                                    <Form.Label>Duracion</Form.Label>
+                                    <Form.Control as="select" id="durationTask" onChange={handleChange}>
+                                        <option value="00:00:00">Selecciona</option>
+                                        <option value="00:30:00">Corto</option>
+                                        <option value="00:45:00">Medio</option>
+                                        <option value="01:00:00">Largo</option>
+                                    </Form.Control>
+                                </Form.Group>
+                        }
                         <Form.Group>
-                            <Form.Label>Duracion tarea</Form.Label>
-                            <Form.Control type="durationTask" placeholder="00:00:00" value={durationTask} id="durationTask" onChange={handleChange}/>
-                            {
-                                errorTime
-                                ?   <Form.Text className="text-muted">
-                                        Error en la hora, recuerda que no puede ser arriba de dos horas.
-                                    </Form.Text>
-                                :   null
-                            }
+                            <Form.Check type="checkbox" label="Ingreso manual" value={selectorModal} onChange={()=>{setSelectorModal(!selectorModal)}}/>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
