@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Form, Button, Modal, Navbar, FormControl, Card} from 'react-bootstrap'
+import {Form, Button, Modal, Navbar, FormControl} from 'react-bootstrap'
 import {Container,Row,Col} from 'reactstrap'
 import { AlarmOn, Done, Delete, Settings, AlarmOff, Alarm, Restore } from '@material-ui/icons';
 import moment from 'moment'
@@ -12,6 +12,7 @@ function Tareas (props) {
     const [initInterval, setInitInterval] = useState({});
     const [isActive, setIsActive] = useState(false);
     const [filterData, setFilterData] = useState([])
+    const [editData,setEditData] = useState(false) 
 
     function resetTime() {
         setIsActive(false);
@@ -96,7 +97,16 @@ function Tareas (props) {
                                 fontSize="small"
                                 style={withPointer}
                                 id={row.index}
-                                onClick={(e)=>console.log("prueba-Settings",e.currentTarget.id)}
+                                onClick={(e)=> {
+                                    let found = props.dataInitial.find(value=>value.index==e.currentTarget.id)
+                                    setEditData(true)
+                                    setTask({
+                                        description:found.nombreTarea,
+                                        durationTask:found.totHour,
+                                        index:found.index
+                                    })
+                                    setShowModal(true)
+                                }}
                             />
                             </>
                         :   <>
@@ -163,12 +173,6 @@ function Tareas (props) {
                         style={withPointer}
                         id={row.index}
                         onClick={(e)=>deleteData("terminated",e.currentTarget.id)}
-                    />
-                    <Settings
-                        fontSize="small"
-                        style={withPointer}
-                        id={row.index}
-                        onClick={(e)=>console.log("prueba-settings",e.currentTarget.id)}
                     />
                 </>
             })
@@ -266,6 +270,19 @@ function Tareas (props) {
         props.addData(array)
     }
 
+    const updateTask = () => {
+        //funcion donde se actualizan las tareas
+        let updateData = props.dataInitial.map( val => {
+            if (val.index==task.index) {
+                val.nombreTarea=task.description
+                val.totHour= task.durationTask
+                val.totDiference= task.durationTask
+            }
+            return val
+        })
+        props.addData(updateData)
+    }
+
     const handleChange = ( event ) => {
         let property = event.target.id
         let value = event.target.value
@@ -305,6 +322,7 @@ function Tareas (props) {
     const handleCloseModal = () => {
         setShowModal(!showModal)
         setTask({})
+        setEditData(false)
     }
 
     let {description,durationTask} = task
@@ -314,7 +332,11 @@ function Tareas (props) {
         <Container fluid>
             <Modal show={showModal} onHide={()=>handleCloseModal()}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Creación de Tarea</Modal.Title>
+                    {
+                        editData
+                        ?   <Modal.Title>Edición de Tarea</Modal.Title>
+                        :   <Modal.Title>Creación de Tarea</Modal.Title>
+                    }
                 </Modal.Header>
                 <Modal.Body>
                     <Form className="p-3 bg-dark text-white my-3">
@@ -338,9 +360,9 @@ function Tareas (props) {
                 <Modal.Footer>
                     <Button variant="secondary" onClick={()=>setShowModal(!showModal)}>Cerrar</Button>
                     <Button variant="primary" disabled={disButton} onClick={()=>{
-                        constCreateTask()
+                        editData?updateTask():constCreateTask()
                         handleCloseModal()
-                    }}>Crear Tarea</Button>
+                    }}>{editData?"Actualizar Tarea":"Crear Tarea"}</Button>
                 </Modal.Footer>
             </Modal>
             <Row style={{padding:"10px"}}>
