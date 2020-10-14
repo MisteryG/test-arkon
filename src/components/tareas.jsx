@@ -1,7 +1,7 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Form, Button, Modal, Navbar, FormControl, Card} from 'react-bootstrap'
 import {Container,Row,Col} from 'reactstrap'
-import { AlarmOn, Done, Delete, Settings, AlarmOff } from '@material-ui/icons';
+import { AlarmOn, Done, Delete, Settings, AlarmOff, Alarm, Restore } from '@material-ui/icons';
 import moment from 'moment'
 import BootstrapTable from 'react-bootstrap-table-next';
 
@@ -9,6 +9,45 @@ function Tareas (props) {
     const [errorTime, setErrorTime] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [task, setTask] = useState({})
+    const [initInterval, setInitInterval] = useState({});
+    const [isActive, setIsActive] = useState(false);
+    const [filterData, setFilterData] = useState([])
+
+    function resetTime() {
+        setIsActive(false);
+    }
+
+    useEffect(() => {
+        let interval = null;
+        if (isActive) {
+            interval = setInterval(()=>{
+                if (initInterval.timeSeconds==0) {
+                    handleDone(initInterval.index)
+                    clearInterval(interval)
+                } else {
+                    let obj = {...initInterval}
+                    obj.timeSeconds=initInterval.timeSeconds-1
+                    obj.timeExpend=initInterval.timeExpend+1
+                    setInitInterval(obj)
+                    let newArray = initInterval.orderArray.map (val=>{
+                        if (val.index==initInterval.index) {
+                            val.totDiference=secondsToString(initInterval.timeSeconds)
+                            val.totTimeExpend=secondsToString(initInterval.timeExpend)
+                        }
+                        return val
+                    })
+                    props.addData(newArray)
+                }
+            }, 1000)
+        } else if (!isActive && initInterval.timeSeconds !== 0) {
+            clearInterval(interval);
+        }
+        return () => clearInterval(interval);
+    }, [isActive,initInterval]);
+
+    useEffect(()=>{
+        setFilterData(props.dataInitial)
+    },[props.dataInitial])
 
     const withPointer = {cursor: 'pointer'};
 
@@ -41,7 +80,7 @@ function Tareas (props) {
                     {
                         !row.initTime
                         ?   <>   
-                            <AlarmOn
+                            <Alarm
                                 fontSize="small"
                                 style={withPointer}
                                 id={row.index}
@@ -60,12 +99,26 @@ function Tareas (props) {
                                 onClick={(e)=>console.log("prueba-Settings",e.currentTarget.id)}
                             />
                             </>
-                        :   <AlarmOff
+                        :   <>
+                            <AlarmOff
                                 fontSize="small"
                                 style={withPointer}
                                 id={row.index}
-                                onClick={(e)=>console.log("prueba-alarmoff",e.currentTarget.id)}
+                                onClick={(e)=>setIsActive(false)}
                             />
+                            <AlarmOn
+                                fontSize="small"
+                                style={withPointer}
+                                id={row.index}
+                                onClick={(e)=>setIsActive(true)}
+                            />
+                            <Restore
+                                fontSize="small"
+                                style={withPointer}
+                                id={row.index}
+                                onClick={(e)=>initClock(e.currentTarget.id)}
+                            />
+                            </>
                     }
                     <Done
                         fontSize="small"
@@ -132,24 +185,13 @@ function Tareas (props) {
         orderArray = orderArray.concat(filter)
         props.addData(orderArray)
         let timeSeconds = (parseInt(arrayDeCadenas[0])*3600)+(parseInt(arrayDeCadenas[1])*60)+parseInt(arrayDeCadenas[2])
-        let timeExpend = 0
-        let exeCount = setInterval(()=>{
-            if (timeSeconds==0) {
-                handleDone(index)
-                clearInterval(exeCount)
-            } else {
-                timeSeconds--
-                timeExpend++
-                let newArray = orderArray.map (val=>{
-                    if (val.index==index) {
-                        val.totDiference=secondsToString(timeSeconds)
-                        val.totTimeExpend=secondsToString(timeExpend)
-                    }
-                    return val
-                })
-                props.addData(newArray)
-            }
-        }, 1000)
+        setInitInterval({
+            timeSeconds,
+            orderArray,
+            index,
+            timeExpend:1
+        })
+        setIsActive(true)
     }   
 
     const deleteData = (name,position) => {
@@ -310,17 +352,6 @@ function Tareas (props) {
                     <Button variant="secondary" size="lg" onClick={()=>{handleCloseModal()}}>Crear Tarea</Button>
                 </Col>
             </Row>
-            {/* <Row style={{padding:"10px"}}>
-                <Col/>
-                <Col md="6">
-                <Card>
-                    <Card.Body>
-                        <Card.Title>Tarea ejecutándose</Card.Title>
-                    </Card.Body>
-                </Card>
-                </Col>
-                <Col/>
-            </Row> */}
             <Row>
                 <Col md="6">
                     <Navbar bg="light" variant="light" expand="lg">
@@ -337,7 +368,7 @@ function Tareas (props) {
                         <BootstrapTable
                             bootstrap4
                             keyField="index"
-                            data={ props.dataInitial }
+                            data={ filterData }
                             columns={ columns_initial }
                             striped bordered hover
                         />
