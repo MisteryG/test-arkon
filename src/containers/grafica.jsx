@@ -1,17 +1,17 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Navegacion from "../components/navegacion"
+import Grafica from "../components/grafica"
 
-class Principal extends React.Component {
-
-    componentWillUnmount (){
-        this.props.setLocalStore()
-    }
+class GraficaContainer extends React.Component {
 
     render (){
         return(
             <React.Fragment>
                 <Navegacion/>
+                <Grafica
+                    dataTerminated={this.props.dataTerminated}
+                />
             </React.Fragment>
         )
     }
@@ -19,9 +19,8 @@ class Principal extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        dataTerminated: state.dataTerminated,
-        dataInitial: state.dataInitial
+        dataTerminated: state.dataTerminated
     }
 }
 
-export default connect (mapStateToProps,null)(Principal);
+export default connect (mapStateToProps,null)(GraficaContainer);

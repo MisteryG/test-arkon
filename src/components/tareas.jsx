@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import {Form, Button, Modal, Navbar, FormControl} from 'react-bootstrap'
+import {Form, Button, Modal, Navbar} from 'react-bootstrap'
 import {Container,Row,Col} from 'reactstrap'
 import { AlarmOn, Done, Delete, Settings, AlarmOff, Alarm, Restore } from '@material-ui/icons';
 import moment from 'moment'
-import BootstrapTable from 'react-bootstrap-table-next';
 import GenericTable from '../generic/table'
 
 function Tareas (props) {
@@ -17,7 +16,7 @@ function Tareas (props) {
     const [editData,setEditData] = useState(false)
     const [timeClasificationFilter, setTimeClasificationFilter] = useState(0)
 
-    function resetTime() {
+    const resetTime = () => {
         setIsActive(false);
         let obj = {...initInterval}
         obj.timeSeconds=initInterval.totHour
