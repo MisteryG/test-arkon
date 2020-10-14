@@ -12,13 +12,15 @@ function Tareas (props) {
     const [initInterval, setInitInterval] = useState({});
     const [isActive, setIsActive] = useState(false);
     const [filterData, setFilterData] = useState([])
-    const [editData,setEditData] = useState(false) 
+    const [editData,setEditData] = useState(false)
+    const [timeClasificationFilter, setTimeClasificationFilter] = useState(0)
 
     function resetTime() {
         setIsActive(false);
     }
 
     useEffect(() => {
+        //use effect que sirve para el manejo de contadores
         let interval = null;
         if (isActive) {
             interval = setInterval(()=>{
@@ -27,6 +29,7 @@ function Tareas (props) {
                     clearInterval(interval)
                 } else {
                     let obj = {...initInterval}
+                    console.log(obj)
                     obj.timeSeconds=initInterval.timeSeconds-1
                     obj.timeExpend=initInterval.timeExpend+1
                     setInitInterval(obj)
@@ -47,8 +50,20 @@ function Tareas (props) {
     }, [isActive,initInterval]);
 
     useEffect(()=>{
-        setFilterData(props.dataInitial)
-    },[props.dataInitial])
+        //use effect que sirve para filtrar la tabla de acuerdo a la duracion de tareas
+        if(timeClasificationFilter==0) {
+            setFilterData(props.dataInitial)
+        } else if (timeClasificationFilter==1) {
+            let newArray = props.dataInitial.filter(val=>arrayToSeconds(val.totHour)<=1800)
+            setFilterData(newArray)
+        } else if (timeClasificationFilter==2) {
+            let newArray = props.dataInitial.filter(val=>arrayToSeconds(val.totHour)>1800&&arrayToSeconds(val.totHour)<=3600)
+            setFilterData(newArray)
+        } else if (timeClasificationFilter==3) {
+            let newArray = props.dataInitial.filter(val=>arrayToSeconds(val.totHour)>3600)
+            setFilterData(newArray)
+        }
+    },[props.dataInitial, timeClasificationFilter])
 
     const withPointer = {cursor: 'pointer'};
 
@@ -85,7 +100,10 @@ function Tareas (props) {
                                 fontSize="small"
                                 style={withPointer}
                                 id={row.index}
-                                onClick={(e)=>initClock(e.currentTarget.id)}
+                                onClick={(e)=>{
+                                    resetTaskArray()
+                                    initClock(e.currentTarget.id)
+                                }}
                             />
                             <Delete
                                 fontSize="small"
@@ -179,24 +197,43 @@ function Tareas (props) {
         }
     ]
 
+    const arrayToSeconds = (array) => {
+        // funcion donde se convierte el string de tiempo en segundos
+        let setterTime = array.split(':')
+        return (parseInt(setterTime[0])*3600)+(parseInt(setterTime[1])*60)+parseInt(setterTime[2])
+    }
+
+    const resetTaskArray = () => {
+        //funcion donde se coloca el inittime en false
+        let updateData = props.dataInitial.map( val => {
+            val.initTime = false
+            return val
+        })
+        props.addData(updateData)
+    }
+
     const initClock = (index) => {
+        // iniciar el conteo descendiente de la actividad seleccionada
         let found = props.dataInitial.find(value=>value.index==index)
+        let timeExpend = 1
+        if (found.hasOwnProperty('totTimeExpend')) {
+            timeExpend = arrayToSeconds(found.totTimeExpend)
+        }
         found.initTime = true
-        var arrayDeCadenas = found.totDiference.split(':');
+        let timeSeconds = arrayToSeconds(found.totDiference)
         let filter = props.dataInitial.filter(value=>value.index!=index)
         let orderArray = []
         orderArray.push(found)
         orderArray = orderArray.concat(filter)
         props.addData(orderArray)
-        let timeSeconds = (parseInt(arrayDeCadenas[0])*3600)+(parseInt(arrayDeCadenas[1])*60)+parseInt(arrayDeCadenas[2])
         setInitInterval({
             timeSeconds,
             orderArray,
             index,
-            timeExpend:1
+            timeExpend
         })
         setIsActive(true)
-    }   
+    } 
 
     const deleteData = (name,position) => {
         let data = []
@@ -223,7 +260,7 @@ function Tareas (props) {
             sec=sec<10?`0${sec}`:sec
             let totHour = hour===2?"02:00:00":`${hour}:${min}:${sec}`
             let randomPercent = Math.trunc(80 + Math.random() * (100 - 80))
-            let timeSeconds = (parseInt(hour)*3600)+(parseInt(min)*60)+parseInt(sec)
+            let timeSeconds = arrayToSeconds(totHour)
             let objectRandom = {
                 index:countData+1,
                 nombreTarea: Math.random().toString(36).substring(10),
@@ -380,10 +417,15 @@ function Tareas (props) {
                         <Navbar.Brand>Tareas Pendientes</Navbar.Brand>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav">
-                            <Form inline>
-                                <FormControl type="text" placeholder="Busqueda" className="mr-sm-2" />
-                                <Button variant="outline-info">Busqueda</Button>
-                            </Form>
+                            <Form.Group as={Col} controlId="formGridState">
+                                <Form.Label>Duracion</Form.Label>
+                                <Form.Control as="select" onChange={(event)=>setTimeClasificationFilter(event.target.value)}>
+                                    <option value="0">Selecciona</option>
+                                    <option value="1">Corto</option>
+                                    <option value="2">Medio</option>
+                                    <option value="3">Largo</option>
+                                </Form.Control>
+                            </Form.Group>
                         </Navbar.Collapse>
                     </Navbar>
                     <div className="table-wrapper-scroll-y my-custom-scrollbar">
