@@ -361,6 +361,7 @@ function Tareas (props) {
     const handleCloseModal = () => {
         setShowModal(!showModal)
         setTask({})
+        setSelectorModal(false)
         setEditData(false)
     }
 
