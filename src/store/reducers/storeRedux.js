@@ -23,6 +23,11 @@ const reducer = (state=initialState, action) => {
                 ...state,
                 dataModal:{}
             }
+        case actionTypes.CLEAR_INITIAL_DATA:
+            return {
+                ...state,
+                dataInitial: []
+            }
         default:
             return state
     }

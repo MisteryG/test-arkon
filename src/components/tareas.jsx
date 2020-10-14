@@ -4,6 +4,7 @@ import {Container,Row,Col} from 'reactstrap'
 import { AlarmOn, Done, Delete, Settings, AlarmOff, Alarm, Restore } from '@material-ui/icons';
 import moment from 'moment'
 import BootstrapTable from 'react-bootstrap-table-next';
+import GenericTable from '../generic/table'
 
 function Tareas (props) {
     const [errorTime, setErrorTime] = useState(false)
@@ -29,7 +30,6 @@ function Tareas (props) {
                     clearInterval(interval)
                 } else {
                     let obj = {...initInterval}
-                    console.log(obj)
                     obj.timeSeconds=initInterval.timeSeconds-1
                     obj.timeExpend=initInterval.timeExpend+1
                     setInitInterval(obj)
@@ -225,6 +225,7 @@ function Tareas (props) {
         let orderArray = []
         orderArray.push(found)
         orderArray = orderArray.concat(filter)
+        props.clearInitialData()
         props.addData(orderArray)
         setInitInterval({
             timeSeconds,
@@ -428,15 +429,11 @@ function Tareas (props) {
                             </Form.Group>
                         </Navbar.Collapse>
                     </Navbar>
-                    <div className="table-wrapper-scroll-y my-custom-scrollbar">
-                        <BootstrapTable
-                            bootstrap4
-                            keyField="index"
-                            data={ filterData }
-                            columns={ columns_initial }
-                            striped bordered hover
-                        />
-                    </div>
+                    <GenericTable
+                        data={filterData}
+                        columns={columns_initial}
+                        defaultSorted={false}
+                    />
                 </Col>
                 <Col md="6">
                     <Navbar bg="light" variant="light" expand="lg">
@@ -449,16 +446,11 @@ function Tareas (props) {
                             </Form>
                         </Navbar.Collapse>
                     </Navbar>
-                    <div className="table-wrapper-scroll-y my-custom-scrollbar">
-                        <BootstrapTable
-                            bootstrap4
-                            keyField="index"
-                            data={ props.dataTerminated }
-                            columns={ columns_terminated }
-                            defaultSorted={[{dataField: 'index',order: 'asc'}]}
-                            striped bordered hover
-                        />
-                    </div>
+                    <GenericTable
+                        data={props.dataTerminated}
+                        columns={columns_terminated}
+                        defaultSorted={true}
+                    />
                 </Col>
             </Row>
         </Container>

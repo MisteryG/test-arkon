@@ -12,6 +12,7 @@ class Principal extends React.Component {
                 <Tareas
                     createData={this.props.createData}
                     addData={this.props.addData}
+                    clearInitialData={this.props.clearInitialData}
                     dataTerminated={this.props.dataTerminated}
                     dataInitial={this.props.dataInitial}
                 />
@@ -30,7 +31,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => {
     return {
         createData:(data)=>{dispatch(actionTypes.createData(data))},
-        addData:(data)=>{dispatch(actionTypes.addData(data))}
+        addData:(data)=>{dispatch(actionTypes.addData(data))},
+        clearInitialData:()=>{dispatch(actionTypes.clearInitialData())}
     }
 }
 

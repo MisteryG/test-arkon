@@ -3,5 +3,6 @@ export {
     errorConsult,
     addData,
     clearData,
-    createData
+    createData,
+    clearInitialData
 } from './actionsStore.js'
