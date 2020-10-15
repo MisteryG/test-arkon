@@ -19,15 +19,11 @@ function Tareas (props) {
 
     const resetTime = () => {
         setIsActive(false);
-        let obj = {...initInterval}
-        obj.timeSeconds=initInterval.totHour
-        obj.timeExpend = 0
-        obj.initTime = false
-        setInitInterval(obj)
         let newArray = initInterval.orderArray.map (val=>{
             if (val.index==initInterval.index) {
                 val.totDiference=val.totHour
                 val.totTimeExpend=secondsToString(initInterval.timeExpend)
+                val.initTime=false
             }
             return val
         })
@@ -82,6 +78,72 @@ function Tareas (props) {
 
     const withPointer = {cursor: 'pointer'};
 
+    const functionFormatter = (cell, row, rowIndex) => {
+        return <span>
+        {
+            !row.initTime
+            ?   <>   
+                <Alarm
+                    fontSize="small"
+                    style={withPointer}
+                    id={row.index}
+                    onClick={(e)=>{
+                        resetTaskArray()
+                        initClock(e.currentTarget.id)
+                    }}
+                />
+                <Delete
+                    fontSize="small"
+                    style={withPointer}
+                    id={row.index}
+                    onClick={(e)=>deleteData("initial",e.currentTarget.id)}
+                />
+                <Settings
+                    fontSize="small"
+                    style={withPointer}
+                    id={row.index}
+                    onClick={(e)=> {
+                        let found = props.dataInitial.find(value=>value.index==e.currentTarget.id)
+                        setEditData(true)
+                        setTask({
+                            description:found.nombreTarea,
+                            durationTask:found.totHour,
+                            index:found.index
+                        })
+                        setShowModal(true)
+                    }}
+                />
+                </>
+            :   <>
+                <AlarmOff
+                    fontSize="small"
+                    style={withPointer}
+                    id={row.index}
+                    onClick={(e)=>setIsActive(false)}
+                />
+                <AlarmOn
+                    fontSize="small"
+                    style={withPointer}
+                    id={row.index}
+                    onClick={(e)=>setIsActive(true)}
+                />
+                <Restore
+                    fontSize="small"
+                    style={withPointer}
+                    id={row.index}
+                    onClick={(e)=>resetTime()}
+                />
+                </>
+        }
+        <Done
+            fontSize="small"
+            style={withPointer}
+            id={row.index}
+            onClick={(e)=>handleDone(e.currentTarget.id)}
+        />
+        </span> 
+    }
+
     const columns_initial = [
         {
             dataField: 'index',
@@ -100,77 +162,12 @@ function Tareas (props) {
         },
         {
             dataField: 'totDiference',
-            text: 'Tiempo Restante',
-            sort: true
+            text: 'Tiempo Restante'
         },
         {
-            dataField: 'opciones',
+            dataField: 'initTime',
             text: 'Opciones',
-            formatter: ((cell, row)=>{
-                return <>
-                    {
-                        !row.initTime
-                        ?   <>   
-                            <Alarm
-                                fontSize="small"
-                                style={withPointer}
-                                id={row.index}
-                                onClick={(e)=>{
-                                    resetTaskArray()
-                                    initClock(e.currentTarget.id)
-                                }}
-                            />
-                            <Delete
-                                fontSize="small"
-                                style={withPointer}
-                                id={row.index}
-                                onClick={(e)=>deleteData("initial",e.currentTarget.id)}
-                            />
-                            <Settings
-                                fontSize="small"
-                                style={withPointer}
-                                id={row.index}
-                                onClick={(e)=> {
-                                    let found = props.dataInitial.find(value=>value.index==e.currentTarget.id)
-                                    setEditData(true)
-                                    setTask({
-                                        description:found.nombreTarea,
-                                        durationTask:found.totHour,
-                                        index:found.index
-                                    })
-                                    setShowModal(true)
-                                }}
-                            />
-                            </>
-                        :   <>
-                            <AlarmOff
-                                fontSize="small"
-                                style={withPointer}
-                                id={row.index}
-                                onClick={(e)=>setIsActive(false)}
-                            />
-                            <AlarmOn
-                                fontSize="small"
-                                style={withPointer}
-                                id={row.index}
-                                onClick={(e)=>setIsActive(true)}
-                            />
-                            <Restore
-                                fontSize="small"
-                                style={withPointer}
-                                id={row.index}
-                                onClick={(e)=>resetTime()}
-                            />
-                            </>
-                    }
-                    <Done
-                        fontSize="small"
-                        style={withPointer}
-                        id={row.index}
-                        onClick={(e)=>handleDone(e.currentTarget.id)}
-                    />
-                </>  
-            })
+            formatter: functionFormatter
         }
     ]
 

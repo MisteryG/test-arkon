@@ -1,7 +1,8 @@
 import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next';
 
-function tableGeneric (props) {
+function TableGeneric (props) {
+
     return (
         <div className="table-wrapper-scroll-y my-custom-scrollbar">
             <BootstrapTable
@@ -16,4 +17,4 @@ function tableGeneric (props) {
     )
 }
 
-export default tableGeneric
+export default TableGeneric
