@@ -148,7 +148,6 @@ function Grafica (props) {
         let dataSend = dataOrigin.map(val=>{
             return {x:parseInt(val.x),y:parseInt(secondsToString(val.y).substring(0,2))}
         })
-        console.log(dataSend)
         return dataSend;
     }
     
@@ -171,7 +170,41 @@ function Grafica (props) {
     const [dataSetTwo,setDataSetTwo] = useState(getDataSetTwo())
     const [tickValues,setTickValues] = useState(getTickValues())
     const [fechas,setFechas] = useState({})
-    const [maxHourTime,setMaxHourTime] = useState(0)
+
+    const getMaxTime = () => {
+        let maxtime = 0
+        dataSetOne.forEach(val=>{
+            if (val.y>maxtime){
+                maxtime=val.y
+            }
+        })
+        dataSetTwo.forEach(val=>{
+            if (val.y>maxtime){
+                maxtime=val.y
+            }
+        })
+        maxtime++
+        return maxtime
+    }
+
+    const [maxHourTime,setMaxHourTime] = useState(getMaxTime())
+
+    const getRangeDays = () => {
+        let minDate = 31
+        let maxDate = 0
+        dataSetOne.forEach(val=>{
+            if (val.x>maxDate){
+                maxDate=val.x
+            }
+            if (val.x<minDate){
+                minDate=val.x
+            }
+        })
+        maxDate++
+        return {min:minDate,max:maxDate}
+    }
+
+    const [rangeDays,setRangeDays] = useState(getRangeDays())
         
     useEffect(()=>{
         if (Object.keys(fechas).length==0){
@@ -212,7 +245,7 @@ function Grafica (props) {
                     Note that all components plotted against this axis will have the same y domain
                     */}
                     <VictoryAxis dependentAxis
-                    domain={[0, 12]}
+                    domain={[0, maxHourTime]}
                     offsetX={50}
                     orientation="left"
                     standalone={false}
@@ -223,8 +256,8 @@ function Grafica (props) {
                     <VictoryLine
                     data={dataSetOne}
                     domain={{
-                        x: [7, 14],
-                        y: [0, 12]
+                        x: [rangeDays.min, rangeDays.max],
+                        y: [0, maxHourTime]
                     }}
                     interpolation="monotoneX"
                     scale={{x: "linear", y: "linear"}}
@@ -237,7 +270,7 @@ function Grafica (props) {
                     Note that all components plotted against this axis will have the same y domain
                     */}
                     <VictoryAxis dependentAxis
-                    domain={[0, 12]}
+                    domain={[0, maxHourTime]}
                     orientation="right"
                     standalone={false}
                     style={styles.axisTwo}
@@ -247,8 +280,8 @@ function Grafica (props) {
                     <VictoryLine
                     data={dataSetTwo}
                     domain={{
-                        x: [7, 14],
-                        y: [0, 12]
+                        x: [rangeDays.min, rangeDays.max],
+                        y: [0, maxHourTime]
                     }}
                     interpolation="monotoneX"
                     scale={{x: "linear", y: "linear"}}
