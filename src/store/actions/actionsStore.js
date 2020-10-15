@@ -27,6 +27,12 @@ export const clearData = () => {
     }
 }
 
+export const clearAllData = () => {
+    return {
+        type:actionTypes.CLEAR_ALL_DATA
+    }
+}
+
 export const clearInitialData = () => {
     return {
         type:actionTypes.CLEAR_INITIAL_DATA

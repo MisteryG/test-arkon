@@ -26,7 +26,7 @@ function Tareas (props) {
         setInitInterval(obj)
         let newArray = initInterval.orderArray.map (val=>{
             if (val.index==initInterval.index) {
-                val.totDiference=secondsToString(initInterval.timeSeconds)
+                val.totDiference=val.totHour
                 val.totTimeExpend=secondsToString(initInterval.timeExpend)
             }
             return val
@@ -246,6 +246,7 @@ function Tareas (props) {
     } 
 
     const deleteData = (name,position) => {
+        setIsActive(false)
         let data = []
         if (name==="initial") {
             data = props.dataInitial.filter(val => val.index!=position)
@@ -340,6 +341,7 @@ function Tareas (props) {
     }
 
     const handleDone = (position) => {
+        setIsActive(false)
         let found = props.dataInitial.find(val=>val.index==position)
         let data = props.dataInitial.filter(val => val.index!=position)
         let index=0
@@ -417,13 +419,14 @@ function Tareas (props) {
                     }}>{editData?"Actualizar Tarea":"Crear Tarea"}</Button>
                 </Modal.Footer>
             </Modal>
-            <Row style={{padding:"10px"}}>
-                <Col md="7"/>
-                <Col md="3">
-                    <Button variant="secondary" size="lg" onClick={()=>{createData()}}>Random Tareas Finalizadas</Button>
-                </Col>
-                <Col md="2">
-                    <Button variant="secondary" size="lg" onClick={()=>{handleCloseModal()}}>Crear Tarea</Button>
+            <Row style={{paddingTop:"10px", paddingBottom:"10px"}} md="12">
+                <Col md="5">
+                    <Button variant="secondary" size="lg" onClick={()=>{
+                        setIsActive(false)
+                        props.clearAllData()
+                    }}>Reset</Button>{' '}
+                    <Button variant="secondary" size="lg" onClick={()=>{createData()}}>Random Tareas Finalizadas</Button>{' '}
+                    <Button variant="secondary" size="lg" onClick={()=>{handleCloseModal()}}>Crear Tarea</Button>{' '}
                 </Col>
             </Row>
             <Row>

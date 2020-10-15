@@ -4,5 +4,6 @@ export {
     addData,
     clearData,
     createData,
-    clearInitialData
+    clearInitialData,
+    clearAllData
 } from './actionsStore.js'

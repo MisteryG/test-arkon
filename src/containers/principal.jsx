@@ -16,6 +16,7 @@ class Principal extends React.Component {
                     clearInitialData={this.props.clearInitialData}
                     dataTerminated={this.props.dataTerminated}
                     dataInitial={this.props.dataInitial}
+                    clearAllData={this.props.clearAllData}
                 />
             </React.Fragment>
         )
@@ -33,7 +34,8 @@ const mapDispatchToProps = dispatch => {
     return {
         createData:(data)=>{dispatch(actionTypes.createData(data))},
         addData:(data)=>{dispatch(actionTypes.addData(data))},
-        clearInitialData:()=>{dispatch(actionTypes.clearInitialData())}
+        clearInitialData:()=>{dispatch(actionTypes.clearInitialData())},
+        clearAllData:()=>{dispatch(actionTypes.clearAllData())}
     }
 }
 

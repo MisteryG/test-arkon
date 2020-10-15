@@ -34,6 +34,13 @@ const reducer = (state=initialState, action) => {
                 ...state,
                 dataInitial: []
             }
+        case actionTypes.CLEAR_ALL_DATA:
+            localStorage.clear();
+            return {
+                ...state,
+                dataInitial: [],
+                dataTerminated: []
+            }
         default:
             return state
     }
