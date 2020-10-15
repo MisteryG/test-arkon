@@ -38,7 +38,7 @@ Si se le dio clic en el boton iniciar tiempo, la tarea pasa al inicio de la tabl
 
 En la tabla historico en la columna opciones solo se muestra el icono de borrar de la lista la tarea seleccionada.
 
-### `Pagina principal`
+### `Pagina graficas`
 
 En caso de que no se tenga informacion en tabla historico, no se muestra la grafica.
 
