@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {VictoryLabel,VictoryAxis,VictoryLine} from 'victory';
 import {Container,Row,Col} from 'reactstrap'
 import moment from 'moment'
+import { secondsToString, arrayToSeconds } from '../constants/constants'
 
 function Grafica (props) {
 
@@ -10,136 +11,146 @@ function Grafica (props) {
         const RED_COLOR = "#7c270b";
     
         return {
-          parent: {
-            background: "#ccdee8",
-            boxSizing: "border-box",
-            display: "inline",
-            padding: 0,
-            fontFamily: "'Fira Sans', sans-serif"
-          },
-          title: {
-            textAnchor: "start",
-            verticalAnchor: "end",
-            fill: "#000000",
-            fontFamily: "inherit",
-            fontSize: "18px",
-            fontWeight: "bold"
-          },
-          labelNumber: {
-            textAnchor: "middle",
-            fill: "#ffffff",
-            fontFamily: "inherit",
-            fontSize: "14px"
-          },
-    
-          // INDEPENDENT AXIS
-          axisYears: {
-            axis: { stroke: "black", strokeWidth: 1},
-            ticks: {
-              stroke: "black",
-              strokeWidth: 1
+            parent: {
+                background: "#ccdee8",
+                boxSizing: "border-box",
+                display: "inline",
+                padding: 0,
+                fontFamily: "'Fira Sans', sans-serif"
             },
-            tickLabels: {
-              fill: "black",
-              fontFamily: "inherit",
-              fontSize: 16
-            }
-          },
-    
-          // DATA SET ONE
-          axisOne: {
-            grid: {
-              stroke: ({ tick }) =>
-                tick === -10 ? "transparent" : "#ffffff",
-              strokeWidth: 2
+            title: {
+                textAnchor: "start",
+                verticalAnchor: "end",
+                fill: "#000000",
+                fontFamily: "inherit",
+                fontSize: "18px",
+                fontWeight: "bold"
             },
-            axis: { stroke: BLUE_COLOR, strokeWidth: 0 },
-            ticks: { strokeWidth: 0 },
-            tickLabels: {
-              fill: BLUE_COLOR,
-              fontFamily: "inherit",
-              fontSize: 16
+            labelNumber: {
+                textAnchor: "middle",
+                fill: "#ffffff",
+                fontFamily: "inherit",
+                fontSize: "14px"
+            },
+        
+            // INDEPENDENT AXIS
+            axisYears: {
+                axis: { stroke: "black", strokeWidth: 1},
+                ticks: {
+                stroke: "black",
+                strokeWidth: 1
+                },
+                tickLabels: {
+                fill: "black",
+                fontFamily: "inherit",
+                fontSize: 16
+                }
+            },
+        
+            // DATA SET ONE
+            axisOne: {
+                grid: {
+                stroke: ({ tick }) =>
+                    tick === -10 ? "transparent" : "#ffffff",
+                strokeWidth: 2
+                },
+                axis: { stroke: BLUE_COLOR, strokeWidth: 0 },
+                ticks: { strokeWidth: 0 },
+                tickLabels: {
+                fill: BLUE_COLOR,
+                fontFamily: "inherit",
+                fontSize: 16
+                }
+            },
+            labelOne: {
+                fill: BLUE_COLOR,
+                fontFamily: "inherit",
+                fontSize: 12,
+                fontStyle: "italic"
+            },
+            lineOne: {
+                data: { stroke: BLUE_COLOR, strokeWidth: 4.5 }
+            },
+            axisOneCustomLabel: {
+                fill: BLUE_COLOR,
+                fontFamily: "inherit",
+                fontWeight: 300,
+                fontSize: 21
+            },
+        
+            // DATA SET TWO
+            axisTwo: {
+                axis: { stroke: RED_COLOR, strokeWidth: 0 },
+                tickLabels: {
+                fill: RED_COLOR,
+                fontFamily: "inherit",
+                fontSize: 16
+                }
+            },
+            labelTwo: {
+                textAnchor: "end",
+                fill: RED_COLOR,
+                fontFamily: "inherit",
+                fontSize: 12,
+                fontStyle: "italic"
+            },
+            lineTwo: {
+                data: { stroke: RED_COLOR, strokeWidth: 4.5 }
+            },
+        
+            // HORIZONTAL LINE
+            lineThree: {
+                data: { stroke: "#e95f46", strokeWidth: 2 }
             }
-          },
-          labelOne: {
-            fill: BLUE_COLOR,
-            fontFamily: "inherit",
-            fontSize: 12,
-            fontStyle: "italic"
-          },
-          lineOne: {
-            data: { stroke: BLUE_COLOR, strokeWidth: 4.5 }
-          },
-          axisOneCustomLabel: {
-            fill: BLUE_COLOR,
-            fontFamily: "inherit",
-            fontWeight: 300,
-            fontSize: 21
-          },
-    
-          // DATA SET TWO
-          axisTwo: {
-            axis: { stroke: RED_COLOR, strokeWidth: 0 },
-            tickLabels: {
-              fill: RED_COLOR,
-              fontFamily: "inherit",
-              fontSize: 16
-            }
-          },
-          labelTwo: {
-            textAnchor: "end",
-            fill: RED_COLOR,
-            fontFamily: "inherit",
-            fontSize: 12,
-            fontStyle: "italic"
-          },
-          lineTwo: {
-            data: { stroke: RED_COLOR, strokeWidth: 4.5 }
-          },
-    
-          // HORIZONTAL LINE
-          lineThree: {
-            data: { stroke: "#e95f46", strokeWidth: 2 }
-          }
         };
-      }
+    }
 
-      const getDataSetOne = () => {
-        return [
-          {x: new Date(2000, 1, 1), y: 12},
-          {x: new Date(2000, 6, 1), y: 10},
-          {x: new Date(2000, 12, 1), y: 11},
-          {x: new Date(2001, 1, 1), y: 5},
-          {x: new Date(2002, 1, 1), y: 4},
-          {x: new Date(2003, 1, 1), y: 6},
-          {x: new Date(2004, 1, 1), y: 5},
-          {x: new Date(2005, 1, 1), y: 7},
-          {x: new Date(2006, 1, 1), y: 8},
-          {x: new Date(2007, 1, 1), y: 9},
-          {x: new Date(2008, 1, 1), y: -8.5},
-          {x: new Date(2009, 1, 1), y: -9},
-          {x: new Date(2010, 1, 1), y: 5},
-          {x: new Date(2013, 1, 1), y: 1},
-          {x: new Date(2014, 1, 1), y: 2},
-          {x: new Date(2015, 1, 1), y: -5}
-        ];
-      }
+    const getDataSetOne = () => {
+        let dataOrigin = []
+        props.dataTerminated.forEach(element => {
+        let day = moment(element.fecha, 'MM/DD/YYYY').format('DD')
+        let time = arrayToSeconds(element.totTimeExpend)
+        if (dataOrigin.length!==0) {
+            let value = dataOrigin.findIndex(val=>val.x==day)
+            if (value!=-1) {
+                let obj = {...dataOrigin[value]}
+                dataOrigin[value]={x:obj.x,y:obj.y+time}
+            } else {
+                dataOrigin.push({x:day,y:time})
+            }
+        } else {
+            dataOrigin.push({x:day,y:time})
+        }
+        });
+        let dataSend = dataOrigin.map(val=>{
+            return {x:parseInt(val.x),y:parseInt(secondsToString(val.y).substring(0,2))}
+        })
+        return dataSend;
+    }
     
     const getDataSetTwo = () => {
-        return [
-          {x: new Date(2000, 1, 1), y: 5},
-          {x: new Date(2003, 1, 1), y: 6},
-          {x: new Date(2004, 1, 1), y: 4},
-          {x: new Date(2005, 1, 1), y: 10},
-          {x: new Date(2006, 1, 1), y: 12},
-          {x: new Date(2007, 2, 1), y: 48},
-          {x: new Date(2008, 1, 1), y: 19},
-          {x: new Date(2009, 1, 1), y: 31},
-          {x: new Date(2011, 1, 1), y: 49},
-          {x: new Date(2014, 1, 1), y: 40},
-          {x: new Date(2015, 1, 1), y: 21}
-        ];
-      }
+        let dataOrigin = []
+        props.dataTerminated.forEach(element => {
+        let day = moment(element.fecha, 'MM/DD/YYYY').format('DD')
+        let time = arrayToSeconds(element.totHour)
+        if (dataOrigin.length!==0) {
+            let value = dataOrigin.findIndex(val=>val.x==day)
+            if (value!=-1) {
+                let obj = {...dataOrigin[value]}
+                dataOrigin[value]={x:obj.x,y:obj.y+time}
+            } else {
+                dataOrigin.push({x:day,y:time})
+            }
+        } else {
+            dataOrigin.push({x:day,y:time})
+        }
+        });
+        let dataSend = dataOrigin.map(val=>{
+            return {x:parseInt(val.x),y:parseInt(secondsToString(val.y).substring(0,2))}
+        })
+        console.log(dataSend)
+        return dataSend;
+    }
     
     const getTickValues = () => {
         let inicioFecha = moment().subtract(7, 'days').calendar()
@@ -151,17 +162,24 @@ function Grafica (props) {
             moment(inicioFecha, 'MM/DD/YYYY').add(4,'day').format('DD'),
             moment(inicioFecha, 'MM/DD/YYYY').add(5,'day').format('DD'),
             moment(inicioFecha, 'MM/DD/YYYY').add(6,'day').format('DD'),
+            moment(inicioFecha, 'MM/DD/YYYY').add(7,'day').format('DD')
         ];
-      }
+    }
 
-        const [styles,setStyles] = useState(getStyles())
-        const [dataSetOne,setDataSetOne] = useState(getDataSetOne())
-        const [dataSetTwo,setDataSetTwo] = useState(getDataSetTwo())
-        const [tickValues,setTickValues] = useState(getTickValues())
-    
-    console.log("dataTerminated",props.dataTerminated,tickValues)
-    
-      return (
+    const [styles,setStyles] = useState(getStyles())
+    const [dataSetOne,setDataSetOne] = useState(getDataSetOne())
+    const [dataSetTwo,setDataSetTwo] = useState(getDataSetTwo())
+    const [tickValues,setTickValues] = useState(getTickValues())
+    const [fechas,setFechas] = useState({})
+    const [maxHourTime,setMaxHourTime] = useState(0)
+        
+    useEffect(()=>{
+        if (Object.keys(fechas).length==0){
+            setFechas({start:tickValues[0],end:tickValues[tickValues.length]})
+        }
+    },[tickValues])
+
+    return (
         <Container style={{display: "flex", alignContent: "center", flexDirection: "column", height:"93vh"}}>
             <Row >
                 <Col md="12">
@@ -194,37 +212,22 @@ function Grafica (props) {
                     Note that all components plotted against this axis will have the same y domain
                     */}
                     <VictoryAxis dependentAxis
-                    domain={[-10, 15]}
+                    domain={[0, 12]}
                     offsetX={50}
                     orientation="left"
                     standalone={false}
                     style={styles.axisOne}
                     />
 
-                    {/* Red annotation line */}
-                    <VictoryLine
-                    data={[
-                        {x: new Date(1999, 1, 1), y: 0},
-                        {x: new Date(2014, 6, 1), y: 0}
-                    ]}
-                    domain={{
-                        x: [new Date(1999, 1, 1), new Date(2016, 1, 1)],
-                        y: [-10, 15]
-                    }}
-                    scale={{x: "time", y: "linear"}}
-                    standalone={false}
-                    style={styles.lineThree}
-                    />
-
                     {/* dataset one */}
                     <VictoryLine
                     data={dataSetOne}
                     domain={{
-                        x: [new Date(1999, 1, 1), new Date(2016, 1, 1)],
-                        y: [-10, 15]
+                        x: [7, 14],
+                        y: [0, 12]
                     }}
                     interpolation="monotoneX"
-                    scale={{x: "time", y: "linear"}}
+                    scale={{x: "linear", y: "linear"}}
                     standalone={false}
                     style={styles.lineOne}
                     />
@@ -234,7 +237,7 @@ function Grafica (props) {
                     Note that all components plotted against this axis will have the same y domain
                     */}
                     <VictoryAxis dependentAxis
-                    domain={[0, 50]}
+                    domain={[0, 12]}
                     orientation="right"
                     standalone={false}
                     style={styles.axisTwo}
@@ -244,11 +247,11 @@ function Grafica (props) {
                     <VictoryLine
                     data={dataSetTwo}
                     domain={{
-                        x: [new Date(1999, 1, 1), new Date(2016, 1, 1)],
-                        y: [0, 50]
+                        x: [7, 14],
+                        y: [0, 12]
                     }}
                     interpolation="monotoneX"
-                    scale={{x: "time", y: "linear"}}
+                    scale={{x: "linear", y: "linear"}}
                     standalone={false}
                     style={styles.lineTwo}
                     />
@@ -257,7 +260,7 @@ function Grafica (props) {
                 </Col>
             </Row>
         </Container>
-      )
+    )
 }
 
 export default Grafica

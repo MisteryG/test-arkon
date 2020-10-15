@@ -4,6 +4,7 @@ import {Container,Row,Col} from 'reactstrap'
 import { AlarmOn, Done, Delete, Settings, AlarmOff, Alarm, Restore } from '@material-ui/icons';
 import moment from 'moment'
 import GenericTable from '../generic/table'
+import { secondsToString, arrayToSeconds } from '../constants/constants'
 
 function Tareas (props) {
     const [errorTime, setErrorTime] = useState(false)
@@ -211,12 +212,6 @@ function Tareas (props) {
         }
     ]
 
-    const arrayToSeconds = (array) => {
-        // funcion donde se convierte el string de tiempo en segundos
-        let setterTime = array.split(':')
-        return (parseInt(setterTime[0])*3600)+(parseInt(setterTime[1])*60)+parseInt(setterTime[2])
-    }
-
     const resetTaskArray = () => {
         //funcion donde se coloca el inittime en false
         let updateData = props.dataInitial.map( val => {
@@ -279,7 +274,7 @@ function Tareas (props) {
             let objectRandom = {
                 index:countData+1,
                 nombreTarea: Math.random().toString(36).substring(10),
-                fecha:moment(inicioFecha, 'MM/DD/YYYY').add(Math.trunc(Math.random()*10),'day').format('MM/DD/YYYY'),
+                fecha:moment(inicioFecha, 'MM/DD/YYYY').add(Math.trunc(0 + Math.random() * (7 - 0)),'day').format('MM/DD/YYYY'),
                 totHour,
                 totTimeExpend: secondsToString(Math.trunc(Math.floor(timeSeconds*randomPercent)/100)),
                 edition: false
@@ -287,17 +282,6 @@ function Tareas (props) {
             arrayData.push(objectRandom)
         }
         props.createData(arrayData)
-    }
-
-    const secondsToString = (seconds) => {
-        //funcion para convertir de segundos a horas
-        var hour = Math.floor(seconds / 3600);
-        hour = (hour < 10)? '0' + hour : hour;
-        var minute = Math.floor((seconds / 60) % 60);
-        minute = (minute < 10)? '0' + minute : minute;
-        var second = seconds % 60;
-        second = (second < 10)? '0' + second : second;
-        return hour + ':' + minute + ':' + second;
     }
 
     const constCreateTask = () => {
