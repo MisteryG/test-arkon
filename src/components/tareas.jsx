@@ -6,20 +6,33 @@ import moment from 'moment'
 import GenericTable from '../generic/table'
 import { secondsToString, arrayToSeconds } from '../constants/constants'
 import { useLayoutEffect } from 'react';
-
+// componente donde se registran las tareas y se ve el historico
 function Tareas (props) {
+    // constante para reseteo de variables en caso de que se salga de la pagina o se de refresh cuando este un conteo
     const [refresh,setRefresh] = useState(false)
+    // variable para manejo de errores en el tiempo en el modal
     const [errorTime, setErrorTime] = useState(false)
+    // variable para mostrar o no el modal de creacion edicion
     const [showModal, setShowModal] = useState(false)
+    // check del modal para escoger ingreso manual o por select
     const [selectorModal, setSelectorModal] = useState(false)
+    // variable para la tarea del modal
     const [task, setTask] = useState({})
+    // variable para el control del tiempo del  intervalo
     const [initInterval, setInitInterval] = useState({});
+    // variable para el control de la pausa, inicio, termino y reset del intervalo
     const [isActive, setIsActive] = useState(false);
+    // variable donde esta la informacion filtrada de la primer tabla
     const [filterData, setFilterData] = useState([])
+    // varibale para la seleccion de la edicion o creacion en el modal
     const [editData,setEditData] = useState(false)
+    // filtro que se debe de tomar para la clasificacion por tiempo
     const [timeClasificationFilter, setTimeClasificationFilter] = useState(0)
 
     const resetTime = () => {
+        // funcion para el reinicio de tiempo
+        // se coloca tiempo inicial, se cambia la variable para los iconos en la tabla
+        // se pasa la data al redux
         setIsActive(false);
         let newArray = initInterval.orderArray.map (val=>{
             if (val.index==initInterval.index) {
@@ -34,6 +47,8 @@ function Tareas (props) {
     }
 
     useLayoutEffect(()=>{
+        // funcion para que en caso de detener el contador por refresh o cambio de pagina
+        // los iconos de contador regresen al estado inicial se envia data al redux
         let setStart = props.dataInitial.map(value=>{
             value.initTime=false
             return value
@@ -43,6 +58,7 @@ function Tareas (props) {
 
     useEffect(() => {
         //use effect que sirve para el manejo de contadores
+        //inicio, pausa, detener o reiniciar
         let interval = null;
         if (isActive) {
             interval = setInterval(()=>{
@@ -72,6 +88,7 @@ function Tareas (props) {
 
     useEffect(()=>{
         //use effect que sirve para filtrar la tabla de acuerdo a la duracion de tareas
+        //de acuerdo a lo seleccionado por el usuario
         if(timeClasificationFilter==0) {
             setFilterData(props.dataInitial)
         } else if (timeClasificationFilter==1) {
@@ -86,78 +103,95 @@ function Tareas (props) {
         }
     },[props.dataInitial, timeClasificationFilter])
 
+    //cursor de mano para cuando se coloca sobre algun icono de accion
     const withPointer = {cursor: 'pointer'};
 
     const functionFormatter = (cell, row, rowIndex) => {
+        //funcion para darle formato a la columna opciones en la primer tabla
         return <span>
         {
             !row.initTime
-            ?   <>   
-                <Alarm
-                    fontSize="small"
-                    style={withPointer}
-                    id={row.index}
-                    onClick={(e)=>{
-                        resetTaskArray()
-                        initClock(e.currentTarget.id)
-                    }}
-                />
-                <Delete
-                    fontSize="small"
-                    style={withPointer}
-                    id={row.index}
-                    onClick={(e)=>deleteData("initial",e.currentTarget.id)}
-                />
-                <Settings
-                    fontSize="small"
-                    style={withPointer}
-                    id={row.index}
-                    onClick={(e)=> {
-                        let found = props.dataInitial.find(value=>value.index==e.currentTarget.id)
-                        setEditData(true)
-                        setTask({
-                            description:found.nombreTarea,
-                            durationTask:found.totHour,
-                            index:found.index
-                        })
-                        setShowModal(true)
-                        if (durationTask==="00:00:00"||durationTask==="00:30:00"||durationTask==="00:45:00"||durationTask==="01:00:00"){
-                            selectorModal(true)
-                        }
-                    }}
-                />
+            ?   <>
+                <i data-toggle="tooltip" data-placement="bottom" title="Iniciar tarea">
+                    <Alarm
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index}
+                        onClick={(e)=>{
+                            resetTaskArray()
+                            initClock(e.currentTarget.id)
+                        }}
+                    />
+                </i>
+                <i data-toggle="tooltip" data-placement="bottom" title="Borrar tarea">
+                    <Delete
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index}
+                        onClick={(e)=>deleteData("initial",e.currentTarget.id)}
+                    />
+                </i>
+                <i data-toggle="tooltip" data-placement="bottom" title="Editar tarea">
+                    <Settings
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index}
+                        onClick={(e)=> {
+                            let found = props.dataInitial.find(value=>value.index==e.currentTarget.id)
+                            setEditData(true)
+                            setTask({
+                                description:found.nombreTarea,
+                                durationTask:found.totHour,
+                                index:found.index
+                            })
+                            setShowModal(true)
+                            if (durationTask==="00:00:00"||durationTask==="00:30:00"||durationTask==="00:45:00"||durationTask==="01:00:00"){
+                                selectorModal(true)
+                            }
+                        }}
+                    />
+                </i>
                 </>
             :   <>
-                <AlarmOff
-                    fontSize="small"
-                    style={withPointer}
-                    id={row.index}
-                    onClick={(e)=>setIsActive(false)}
-                />
-                <AlarmOn
-                    fontSize="small"
-                    style={withPointer}
-                    id={row.index}
-                    onClick={(e)=>setIsActive(true)}
-                />
-                <Restore
-                    fontSize="small"
-                    style={withPointer}
-                    id={row.index}
-                    onClick={(e)=>resetTime()}
-                />
+                <i data-toggle="tooltip" data-placement="bottom" title="Detener tarea">
+                    <AlarmOff
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index}
+                        onClick={(e)=>setIsActive(false)}
+                    />
+                </i>
+                <i data-toggle="tooltip" data-placement="bottom" title="Iniciar tarea">
+                    <AlarmOn
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index}
+                        onClick={(e)=>setIsActive(true)}
+                    />
+                </i>
+                <i data-toggle="tooltip" data-placement="bottom" title="Reiniciar tarea">
+                    <Restore
+                        fontSize="small"
+                        style={withPointer}
+                        id={row.index}
+                        onClick={(e)=>resetTime()}
+                    />
+                </i>
                 </>
         }
-        <Done
-            fontSize="small"
-            style={withPointer}
-            id={row.index}
-            onClick={(e)=>handleDone(e.currentTarget.id)}
-        />
+        <i data-toggle="tooltip" data-placement="bottom" title="Finalizar tarea">
+            <Done
+                fontSize="small"
+                style={withPointer}
+                id={row.index}
+                onClick={(e)=>handleDone(e.currentTarget.id)}
+            />
+        </i>
         </span> 
     }
 
     const columns_initial = [
+        //columnas para la primer tabla
         {
             dataField: 'index',
             text: '#',
@@ -185,6 +219,7 @@ function Tareas (props) {
     ]
 
     const columns_terminated = [
+        // columnas para la primer tabla
         {
             dataField: 'index',
             text: '#',
@@ -224,6 +259,7 @@ function Tareas (props) {
 
     const resetTaskArray = () => {
         //funcion donde se coloca el inittime en false
+        //y se reinicia el contador junto con sus iconos
         let updateData = props.dataInitial.map( val => {
             val.initTime = false
             return val
@@ -232,7 +268,7 @@ function Tareas (props) {
     }
 
     const initClock = (index) => {
-        // iniciar el conteo descendiente de la actividad seleccionada
+        // iniciar el conteo descendiente de la actividad seleccionada inicia el intervalo
         let found = props.dataInitial.find(value=>value.index==index)
         let timeExpend = 1
         if (found.hasOwnProperty('totTimeExpend')) {
@@ -256,6 +292,7 @@ function Tareas (props) {
     } 
 
     const deleteData = (name,position) => {
+        // elimina informacion de cualquiera de las dos tablas
         setIsActive(false)
         let data = []
         if (name==="initial") {
@@ -269,6 +306,7 @@ function Tareas (props) {
 
     const createData = () => {
         //aqui es donde se crean datos al azar
+        //50 elementos con fechas y tiempos aleatorios
         let inicioFecha = moment().subtract(7, 'days').calendar()
         let arrayData = []
         let countData = 50
@@ -297,6 +335,7 @@ function Tareas (props) {
 
     const constCreateTask = () => {
         //funcion donde se crean las tareas nuevas
+        //del modal de creacion
         let index=0
         props.dataInitial.forEach(value=>{
             if (index<value.index) {
@@ -319,6 +358,7 @@ function Tareas (props) {
 
     const updateTask = () => {
         //funcion donde se actualizan las tareas
+        //del modal actualizar
         let updateData = props.dataInitial.map( val => {
             if (val.index==task.index) {
                 val.nombreTarea=task.description
@@ -331,6 +371,7 @@ function Tareas (props) {
     }
 
     const handleChange = ( event ) => {
+        //funcion que valida que se encuentre la tarea en el rango de horas
         let property = event.target.id
         let value = event.target.value
         if (property==="durationTask") {
@@ -351,6 +392,8 @@ function Tareas (props) {
     }
 
     const handleDone = (position) => {
+        //funcion que detiene el contador en caso de que este corriendo
+        //finaliza la tarea seleccionada
         setIsActive(false)
         let found = props.dataInitial.find(val=>val.index==position)
         let data = props.dataInitial.filter(val => val.index!=position)
@@ -368,17 +411,21 @@ function Tareas (props) {
     }
 
     const handleCloseModal = () => {
+        //funcion que controla los estados necesarios al cerrar el modal
         setShowModal(!showModal)
         setTask({})
         setSelectorModal(false)
         setEditData(false)
     }
 
+    //variables necesarias en el modal
     let {description,durationTask} = task
+    //se activa o desactiva el boton guardar del modal
     let disButton=Object.keys(task).length!==0&&task.hasOwnProperty('description')&&task.hasOwnProperty('durationTask')&&!errorTime?false:true
     
     return (
         <Container fluid>
+            {/* modal de edicion creacion */}
             <Modal show={showModal} onHide={()=>handleCloseModal()}>
                 <Modal.Header closeButton>
                     {
@@ -436,17 +483,19 @@ function Tareas (props) {
                 </Modal.Footer>
             </Modal>
             <Row style={{paddingTop:"10px", paddingBottom:"10px"}} md="12">
-                <Col md="5">
-                    <Button variant="secondary" size="lg" onClick={()=>{
+                <Col class="col-md-5 col-lg-2">
+                    {/* botones para creacion de tareas, limpieza de redux y random de historico*/}
+                    <Button variant="secondary" onClick={()=>{
                         setIsActive(false)
                         props.clearAllData()
                     }}>Reset</Button>{' '}
-                    <Button variant="secondary" size="lg" onClick={()=>{createData()}}>Random Tareas Finalizadas</Button>{' '}
-                    <Button variant="secondary" size="lg" onClick={()=>{handleCloseModal()}}>Crear Tarea</Button>{' '}
+                    <Button variant="secondary" onClick={()=>{createData()}}>Random Tareas Finalizadas</Button>{' '}
+                    <Button variant="secondary" onClick={()=>{handleCloseModal()}}>Crear Tarea</Button>{' '}
                 </Col>
             </Row>
             <Row>
                 <Col md="6">
+                    {/* filtro para la primer tabla */}
                     <Navbar bg="light" variant="light" expand="lg">
                         <Navbar.Brand>Tareas Pendientes</Navbar.Brand>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -469,6 +518,7 @@ function Tareas (props) {
                     />
                 </Col>
                 <Col md="6">
+                    {/* titulo de la segunda table de historico */}
                     <Navbar bg="light" variant="light" expand="lg">
                         <Navbar.Brand>Historial de tareas completadas</Navbar.Brand>
                     </Navbar>

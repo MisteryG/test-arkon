@@ -1,6 +1,7 @@
 import React from 'react'
 import {Navbar, Nav} from 'react-bootstrap'
-
+// componente que se encarga de cambiar la pagina de acuerdo a la seleccion del usuario
+// entre el menu principal y las graficas
 function Navegacion () {
     return (
         <Navbar bg="light" variant="light" expand="lg">

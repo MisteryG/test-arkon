@@ -1,8 +1,6 @@
+//el concentrrado de las acciones del redux para no tener el archivo expuesto
 export {
-    loadData,
-    errorConsult,
     addData,
-    clearData,
     createData,
     clearInitialData,
     clearAllData

@@ -5,9 +5,11 @@ import {Card} from 'react-bootstrap'
 import moment from 'moment'
 import { secondsToString, arrayToSeconds } from '../constants/constants'
 
+//componente donde se encuentra la grafica usando victory
 function Grafica (props) {
 
     const getStyles = () => {
+        // funcion donde se cargan los estilos de la tabla
         const BLUE_COLOR = "#00a3de";
         const RED_COLOR = "#7c270b";
     
@@ -107,6 +109,8 @@ function Grafica (props) {
     }
 
     const getDataSetOne = () => {
+        //funcion donde se calcula la informacion de las tareas completadas
+        //de acuerdo al tiempo que utilizo el usuario
         let dataOrigin = []
         props.dataTerminated.forEach(element => {
         let day = moment(element.fecha, 'MM/DD/YYYY').format('DD')
@@ -130,6 +134,8 @@ function Grafica (props) {
     }
     
     const getDataSetTwo = () => {
+        //funcion donde se calcula la informacion de las tareas completadas
+        //de acuerdo al tiempo que se ingreso al inicio por el usuario
         let dataOrigin = []
         props.dataTerminated.forEach(element => {
         let day = moment(element.fecha, 'MM/DD/YYYY').format('DD')
@@ -153,6 +159,8 @@ function Grafica (props) {
     }
     
     const getTickValues = () => {
+        // calculo de los dias anteriores a la fecha actual
+        // para colocar la informacion de las dos funciones anteriores
         let inicioFecha = moment().subtract(7, 'days').calendar()
         return [
             moment(inicioFecha, 'MM/DD/YYYY').format('DD'),
@@ -166,13 +174,19 @@ function Grafica (props) {
         ];
     }
 
+    //constante de los estilos
     const [styles,setStyles] = useState(getStyles())
+    //constante del tiempo invertido
     const [dataSetOne,setDataSetOne] = useState(getDataSetOne())
+    //contante del tiempo ingresado
     const [dataSetTwo,setDataSetTwo] = useState(getDataSetTwo())
+    //constante de los dias anteriores a la fecha para el eje x
     const [tickValues,setTickValues] = useState(getTickValues())
+    //objeto que indica el dia inicial y el final en string
     const [fechas,setFechas] = useState({})
 
     const getMaxTime = () => {
+        //calcula el tiempo maximo en horas para el eje y
         let maxtime = 0
         dataSetOne.forEach(val=>{
             if (val.y>maxtime){
@@ -188,9 +202,11 @@ function Grafica (props) {
         return maxtime
     }
 
+    //maximo tiempo en horas de las tareas
     const [maxHourTime,setMaxHourTime] = useState(getMaxTime())
 
     const getRangeDays = () => {
+        //calculo del rango de fechas en los datos de tareas terminadas
         let minDate = 31
         let maxDate = 0
         dataSetOne.forEach(val=>{
@@ -205,9 +221,12 @@ function Grafica (props) {
         return {min:minDate,max:maxDate}
     }
 
+    //objeto que indica el dia inicial y final en entero
+    //para indicar donde se coloca el dato en el eje x
     const [rangeDays,setRangeDays] = useState(getRangeDays())
         
     useEffect(()=>{
+        //useeffect que verifica que se cuente con las fechas para colocar el string inicial y final
         if (Object.keys(fechas).length==0){
             setFechas({start:tickValues[0],end:tickValues[tickValues.length]})
         }
@@ -215,6 +234,7 @@ function Grafica (props) {
 
     return (
         <Container style={{display: "flex", alignContent: "center", flexDirection: "column", height:"93vh"}}>
+            {/* validacion que veririfica si hay data para mostrar grafica */}
             {
                 props.dataTerminated.length===0
                 ?   <Row style={{padding:"10px"}}>

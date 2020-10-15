@@ -4,7 +4,8 @@ import Navegacion from "../components/navegacion"
 import Grafica from "../components/grafica"
 
 class GraficaContainer extends React.Component {
-
+    // contenedor para la grafica
+    // no hace peticiones solo consume data del redux
     render (){
         return(
             <React.Fragment>

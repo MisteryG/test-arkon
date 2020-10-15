@@ -1,6 +1,8 @@
 import React from 'react'
 import BootstrapTable from 'react-bootstrap-table-next';
 
+//componente generico se usa para las dos tablas del componente tareas
+//recibe la data y la coloca donde corresponde
 function TableGeneric (props) {
 
     return (

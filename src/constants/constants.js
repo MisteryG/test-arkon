@@ -1,3 +1,4 @@
+// funciones que se usan para ambos contenedores, relativos al tiempo
 export const secondsToString = (seconds) => {
     //funcion para convertir de segundos a horas
     var hour = Math.floor(seconds / 3600);

@@ -1,44 +1,25 @@
+// aqui se encuentran las funciones para actualizacion del redux
 import * as actionTypes from './actionTypes.js'
-
-export const loadData = (data) => {
-    return {
-        type:actionTypes.FIND_DATA,
-        data
-    }
-}
-
-export const errorConsult = (error) => {
-    return {
-        type:actionTypes.ERROR_CONSULTA,
-        error
-    }
-}
-
+// funcion para crear datos de usuario
 export const addData = (data) => {
     return {
         type:actionTypes.ADD_DATA,
         data
     }
 }
-
-export const clearData = () => {
-    return {
-        type:actionTypes.CLEAR_DATA
-    }
-}
-
+// funcion para limpiar todos los datos del redux
 export const clearAllData = () => {
     return {
         type:actionTypes.CLEAR_ALL_DATA
     }
 }
-
+// funcion para limpiar datos que ingreso el usuario
 export const clearInitialData = () => {
     return {
         type:actionTypes.CLEAR_INITIAL_DATA
     }
 }
-
+// funcion para almacenar los datos aleatorios en redux
 export const createData = (data) => {
     return {
         type:actionTypes.CREATE_DATA,

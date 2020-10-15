@@ -3,19 +3,9 @@ import { connect } from 'react-redux'
 import Navegacion from "../components/navegacion"
 import Tareas from "../components/tareas"
 import * as actionTypes from '../store/actions/index.js'
-
+//container de la pagina principal se envian los datos del redux y las acciones que se necesitan del redux
+//al componente Tareas
 class Principal extends React.Component {
-
-    componentWillUnmount(){
-        let setStart = []
-        if (this.props.dataInitial.lenght>0){
-            let setStart = this.props.dataInitial.map(value=>{
-                value.initTime=false
-                return value
-            })
-        }
-        this.props.addData(setStart)
-    }
 
     render (){
         return(
