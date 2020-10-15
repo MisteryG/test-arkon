@@ -5,8 +5,10 @@ import { AlarmOn, Done, Delete, Settings, AlarmOff, Alarm, Restore } from '@mate
 import moment from 'moment'
 import GenericTable from '../generic/table'
 import { secondsToString, arrayToSeconds } from '../constants/constants'
+import { useLayoutEffect } from 'react';
 
 function Tareas (props) {
+    const [refresh,setRefresh] = useState(false)
     const [errorTime, setErrorTime] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [selectorModal, setSelectorModal] = useState(false)
@@ -30,6 +32,14 @@ function Tareas (props) {
         setInitInterval({})
         props.addData(newArray)
     }
+
+    useLayoutEffect(()=>{
+        let setStart = props.dataInitial.map(value=>{
+            value.initTime=false
+            return value
+        })
+        props.addData(setStart)
+    },[refresh])
 
     useEffect(() => {
         //use effect que sirve para el manejo de contadores
@@ -57,7 +67,7 @@ function Tareas (props) {
         } else if (!isActive && initInterval.timeSeconds !== 0) {
             clearInterval(interval);
         }
-        return () => clearInterval(interval);
+        return () => clearInterval(interval)
     }, [isActive,initInterval]);
 
     useEffect(()=>{
@@ -111,6 +121,9 @@ function Tareas (props) {
                             index:found.index
                         })
                         setShowModal(true)
+                        if (durationTask==="00:00:00"||durationTask==="00:30:00"||durationTask==="00:45:00"||durationTask==="01:00:00"){
+                            selectorModal(true)
+                        }
                     }}
                 />
                 </>
@@ -329,7 +342,7 @@ function Tareas (props) {
                 if (m.index === regex.lastIndex) {
                     regex.lastIndex++;
                 }
-                m.forEach((match, groupIndex) => {
+                m.forEach(() => {
                     setErrorTime(false)
                 });
             }
@@ -384,7 +397,13 @@ function Tareas (props) {
                             selectorModal
                             ?   <Form.Group>
                                     <Form.Label>Duracion tarea</Form.Label>
-                                    <Form.Control type="durationTask" placeholder="00:00:00" value={durationTask} id="durationTask" onChange={handleChange}/>
+                                    <Form.Control type="durationTask" placeholder="00:00:00" value={durationTask} id="durationTask" onChange={handleChange}
+                                        onKeyDown={(e)=>{
+                                            if (e.which!==190&&e.which!==8&&(e.which<37||(e.which>57&&e.which<96)||e.which>105)){
+                                                e.preventDefault()
+                                            }
+                                        }}
+                                    />
                                     {
                                         errorTime
                                         ?   <Form.Text className="text-muted">
@@ -395,7 +414,7 @@ function Tareas (props) {
                                 </Form.Group>
                             :   <Form.Group>
                                     <Form.Label>Duracion</Form.Label>
-                                    <Form.Control as="select" id="durationTask" onChange={handleChange}>
+                                    <Form.Control as="select" id="durationTask" value={durationTask} onChange={handleChange}>
                                         <option value="00:00:00">Selecciona</option>
                                         <option value="00:30:00">Corto</option>
                                         <option value="00:45:00">Medio</option>

@@ -6,6 +6,17 @@ import * as actionTypes from '../store/actions/index.js'
 
 class Principal extends React.Component {
 
+    componentWillUnmount(){
+        let setStart = []
+        if (this.props.dataInitial.lenght>0){
+            let setStart = this.props.dataInitial.map(value=>{
+                value.initTime=false
+                return value
+            })
+        }
+        this.props.addData(setStart)
+    }
+
     render (){
         return(
             <React.Fragment>
